@@ -69,6 +69,11 @@ export default function Home() {
             <div
               className={`${inter.className} flex items-center justify-center flex-col`}
             >
+                 <h2
+                className={`${inter.className} text-[#247FBA] text-xl font-bold  text-center flex items-center justify-center gap-1`}
+              >
+                Partner Portal
+              </h2>
               <h2
                 className={`${inter.className} text-[#247FBA] text-2xl font-bold mb-6 text-center flex items-center justify-center gap-1`}
               >
