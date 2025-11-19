@@ -48,6 +48,11 @@ interface FormDataType {
   photos: FileList | null;  // ✅ FIXED
   location: string;
   price: string;
+  capacity:string,
+  alreadyrent:string;
+  profession:string ;
+  Lifestyle:string;
+  Apartmentsize:string ,
   city?: string;
 }
 
@@ -80,6 +85,11 @@ export default function PropertyForm() {
     socialMedia:"",
   description:"",
      photos: null,
+       capacity:"",
+  alreadyrent:"",
+  profession:"" ,
+  Lifestyle:"",
+  Apartmentsize:"",
     location: "",
     price: "",
     
@@ -108,7 +118,11 @@ const handleSubmit = async () => {
   for (const key of [
   'lookingFor','propertyKind','propertyType','propertyName','contact','city','location',
   'bedroom','bathroom','balconies','roomtype','Area','Areaunit',
-  'floor','ageproperty','available','availablefor','suitablefor',
+  'floor','ageproperty','available','availablefor','suitablefor',  'capacity',
+  'alreadyrent',
+  'profession', 
+  'Lifestyle',
+  'Apartmentsize',
   'socialMedia','price','description'
 ] as (keyof FormDataType)[]) {    // 👈 Added assertion
   const value = formData[key];
@@ -365,7 +379,37 @@ const handleSubmit = async () => {
 
 <div>
            
-           
+           {
+formData.propertyType =="Apartment" &&
+<div>
+    <Label className="text-md font-medium mt-3 ">Apartment Size </Label>
+                <div className="flex flex-wrap gap-2 mt-1">
+                   {[
+                   "1 bhk",
+                   "2 bhk",
+                   "3 bhk"
+                
+                  ].map((option) => (
+                    <Button
+                      key={option}
+                      variant={
+                        formData.Apartmentsize === option ?
+                        "selectdashed" : "select"
+                      }
+                       size={"sm"}
+                      onClick={() => handleChange("Apartmentsize", option)}
+                    >
+                      {option}
+                      
+                      
+                    </Button>
+                  ))}
+                  </div>
+                 
+</div>
+           }
+
+
                  <Label className="text-md font-medium mt-3 ">Room Type </Label>
                  <div className="flex flex-wrap gap-2 mt-1">
                    {[
@@ -392,10 +436,75 @@ const handleSubmit = async () => {
            
 </div>
 
+<div>
 
+</div>
+<div>
+   <Label className="text-md font-medium mt-3 "> Property Capacity  </Label>
+                 <div className="flex items-center gap-2">
+                 <Input
+                  placeholder="Property Capacity"
+                  value={formData.capacity}
+                  onChange={(e) => handleChange("capacity", e.target.value)}
+                  className="mt-2 w-40"
+                />
+                </div>
+</div>
+
+{ 
+ 
+ formData.lookingFor =="Rent / Lease" &&
+  
+<div>
+   <Label className="text-md font-medium mt-3 ">No. Already Rented </Label>
+                 <div className="flex items-center gap-2">
+                 <Input
+                  placeholder="No. Tetants"
+                  value={formData.alreadyrent}
+                  onChange={(e) => handleChange("alreadyrent", e.target.value)}
+                  className="mt-2 w-40"
+                />
+                </div>
+</div>
+}
+
+
+{ 
+ 
+ formData.lookingFor =="Rent / Lease" && formData.alreadyrent !== "0" && formData.alreadyrent !== ""  &&
+  
+<div>
+   <Label className="text-md font-medium mt-3 ">Profession of the Tetants </Label>
+                     <div className="flex flex-wrap gap-2 mt-1">
+                   {[
+             
+                   "IT Professional",
+"Govt employee",
+"Student",
+"Business",
+,"Doctor" ,
+"Other",
+                   
+                  ].map((option) => (
+                    <Button
+                      key={option}
+                      variant={
+                        formData.profession === option ?
+                        "selectdashed" : "select"
+                      }
+                       size={"sm"}
+                      onClick={() => handleChange("profession", option)}
+                    >
+                      {option}
+                      
+                      
+                    </Button>
+                  ))}
+                  </div>
+</div>
+}
+           
 <div >
-           
-           
                  <Label className="text-md font-medium mt-3 ">Add Area Details </Label>
                  <div className="flex items-center gap-2">
                  <Input
@@ -404,6 +513,8 @@ const handleSubmit = async () => {
                   onChange={(e) => handleChange("Area", e.target.value)}
                   className="mt-2 w-40"
                 />
+           
+           
                 <Select
                   onValueChange={(value) => handleChange("Areaunit", value)}
                   value={formData.Areaunit}
@@ -496,6 +607,32 @@ const handleSubmit = async () => {
                       }
                        size={"sm"}
                       onClick={() => handleChange("availablefor", option)}
+                    >
+                      {option}
+                      
+                      
+                    </Button>
+                  ))}
+                  </div>
+                 
+</div>
+
+<div>
+    <Label className="text-md font-medium mt-3 ">Lifestyle </Label>
+                <div className="flex flex-wrap gap-2 mt-1">
+                   {[
+                   "Quite",
+                   "Social",
+                
+                  ].map((option) => (
+                    <Button
+                      key={option}
+                      variant={
+                        formData.Lifestyle === option ?
+                        "selectdashed" : "select"
+                      }
+                       size={"sm"}
+                      onClick={() => handleChange("Lifestyle", option)}
                     >
                       {option}
                       
