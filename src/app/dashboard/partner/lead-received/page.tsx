@@ -52,6 +52,7 @@ function Page() {
       try {
         const response = await axios.get(`${BASE_URL}/api/user/getApprovedBooking`,{withCredentials:true});
         setProperties(response.data.booking ?? response.data ?? []);
+        console.log(response.data.booking )
         
       } catch (err) {
         console.error('Failed to fetch properties', err);
@@ -159,6 +160,7 @@ function Page() {
                   <Skeleton className='h-30 w-full' />
                   <Skeleton className='h-30 w-full' />
                   <Skeleton className='h-30 w-full' />
+                  
                 </div>
               ) : filteredProperties.length > 0 ? (
                 // Filtered results with staggered animation

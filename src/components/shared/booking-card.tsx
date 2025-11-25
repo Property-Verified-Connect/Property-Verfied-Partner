@@ -67,7 +67,7 @@ function BookingCards({ property, type }: BookingCardsProps) {
       <div className="flex gap-3 mb-3">
         <div className="relative">
           <img
-            src={property.property_approved.photos[0]}
+            src={property.property_approved.photos[0] ||  ""}
             alt={property.property_approved.property_name}
             className="w-24 h-24 rounded-lg object-cover"
           />
