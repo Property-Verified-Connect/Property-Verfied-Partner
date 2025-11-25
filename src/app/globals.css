@@ -133,3 +133,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+.bg-pvr{
+  background-color:#2396C6;
+}

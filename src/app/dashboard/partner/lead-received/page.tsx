@@ -1,7 +1,8 @@
 "use client"
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import axios from 'axios'
+import { motion, AnimatePresence } from 'framer-motion'
 
 import { Button } from '@/components/ui/button'
 import inter from '@/lib/font/Inter'
@@ -30,18 +31,26 @@ interface Property {
     name: string;
   };
   config: string;
+  status: 'approved' | 'contact' | 'purchase';
 }
 
 
 function Page() {
 
-  const [properties, setProperties] = useState<Property[]>([]);  
+  const [properties, setProperties] = useState<Property[]>([]); 
+  const [selected, setSelected] = useState('bookings');
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  const tabs = [
+    { id: 'bookings', label: 'Bookings', status: 'approved' },
+    { id: 'contact', label: 'Contact', status: 'contact' },
+    { id: 'purchase', label: 'Purchase', status: 'purchase' }
+  ];
 
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/api/user/getApprovedBooking`);
-        // Set properties from response; adapt the path to your API shape if needed
+        const response = await axios.get(`${BASE_URL}/api/user/getApprovedBooking`,{withCredentials:true});
         setProperties(response.data.booking ?? response.data ?? []);
         
       } catch (err) {
@@ -50,12 +59,25 @@ function Page() {
       }
     };
     fetchProperties();
-    
   }, []);
 
-  useEffect(()=>{
-    console.log(properties)
-  })
+  // Filter properties based on selected tab
+  const filteredProperties = useMemo(() => {
+    const currentTab = tabs.find(tab => tab.id === selected);
+    const statusFilter = currentTab?.status;
+
+    return properties.filter(property => {
+      const matchesStatus = selected === 'bookings' 
+        ? property.status === 'approved' 
+        : property.status === statusFilter;
+
+      const matchesSearch = searchQuery === '' || 
+        property.approved_property_id?.property_type?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        property.user_id?.name?.toLowerCase().includes(searchQuery.toLowerCase());
+
+      return matchesStatus && matchesSearch;
+    });
+  }, [properties, selected, searchQuery]);
 
   return (
     <div>
@@ -63,7 +85,7 @@ function Page() {
       <div className='min-h-screen w-full overflow-hidden bg-[#CDE4F9] py-17 px-4 flex items-center justify-start flex-col'>
         <div className="flex items-center justify-center gap-1 md:gap-3">
           <Link href={"/dashboard/partner"}>
-            <Button variant="outline" className="mb-2  rounded-full"><ArrowLeft/></Button>
+            <Button variant="outline" className="mb-2 rounded-full"><ArrowLeft/></Button>
           </Link>
 
           <div className="flex items-center bg-white rounded-full shadow px-3 w-11/12 max-w-md mb-3">
@@ -72,30 +94,97 @@ function Page() {
               type="text"
               placeholder="Search by property name or location..."
               className="w-67 md:w-75 px-3 py-2 text-sm outline-none bg-transparent"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
         </div>
-        <div className="  py-2 px-5 md:-ml-20 flex items-start  w-96 ">
-          <h1 className={`${inter.className} font-bold text-gray-600 text-2xl     flex items-center justify-center mb-2 `}>Lead Received<ChevronRight/></h1>
+        
+        <div className="py-2 px-5 md:-ml-20 flex items-start w-96">
+          <h1 className={`${inter.className} font-bold text-gray-600 text-2xl flex items-center justify-center mb-2`}>
+            Lead Received<ChevronRight/>
+          </h1>
         </div>
 
-        <div className='h-full w-96 px-3.5 flex flex-col gap-2'>
-          {properties.length > 0 ? (
-            properties.map((p, i) => (
-              <BookingCards key={i} property={p} type={"partner"} />
-            ))
-          ) : (
-            // Fallback: show a few placeholders or a message
-            <>
-            <div className='flex flex-col gap-1'>
-              <Skeleton className='h-30 w-full' />
-                 <Skeleton className='h-30 w-full' />
+        {/* Tab Selector with Slide Animation */}
+        <div className={`${inter.className} flex items-center justify-center w-96`}>
+          <div className="inline-flex items-center justify-center gap-1 w-90 px-2  p-2 bg-gray-100 rounded-lg relative">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setSelected(tab.id)}
+                className={`
+                  px-6 py-2 text-sm font-medium rounded-md
+                  transition-colors duration-200 ease-in-out
+                  relative z-10
+                  ${selected === tab.id 
+                    ? 'text-white' 
+                    : 'text-gray-600 hover:text-gray-900'
+                  }
+                `}
+              >
+                {tab.label}
+                {/* Sliding background animation */}
+                {selected === tab.id && (
+                  <motion.div
+                    layoutId="activeTabBackground"
+                    className="absolute inset-0 bg-pvr rounded-md -z-10"
+                    transition={{
+                      type: "spring",
+                      stiffness: 350,
+                      damping: 30
+                    }}
+                  />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
 
-                    <Skeleton className='h-30 w-full' />
-                       <Skeleton className='h-30 w-full' />
-            </div>
-            </>
-          )}
+        {/* Cards Container with Animations */}
+        <div className='h-full w-96 mt-5 px-3.5'>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={selected}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+              className="flex flex-col gap-2"
+            >
+              {properties.length === 0 ? (
+                // Loading state
+                <div className='flex flex-col gap-1'>
+                  <Skeleton className='h-30 w-full' />
+                  <Skeleton className='h-30 w-full' />
+                  <Skeleton className='h-30 w-full' />
+                  <Skeleton className='h-30 w-full' />
+                </div>
+              ) : filteredProperties.length > 0 ? (
+                // Filtered results with staggered animation
+                filteredProperties.map((p, i) => (
+                  <motion.div
+                    key={p.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05, duration: 0.3 }}
+                  >
+                    <BookingCards property={p} type={"partner"} />
+                  </motion.div>
+                ))
+              ) : (
+                // No results message with animation
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                  className="text-center py-10 text-gray-500"
+                >
+                  No {tabs.find(t => t.id === selected)?.label.toLowerCase()} found
+                </motion.div>
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div> 
     </div>

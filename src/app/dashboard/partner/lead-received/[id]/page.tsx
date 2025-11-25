@@ -276,22 +276,7 @@ const Page: React.FC = () => {
         </Card>
 
         {/* AI Analysis */}
-        <Card className="bg-white w-11/12 max-w-md rounded-2xl mt-3 shadow-lg border-none">
-          <CardContent className="p-5 text-gray-800 text-sm">
-            <h3 className="font-bold border-b border-gray-200 pb-2 mb-3 text-[#007BFF] text-base">
-              AI Description
-            </h3>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui esse
-              voluptas dolor corrupti impedit provident.
-            </p>
-            <div className="w-full flex items-center justify-center">
-              <Button className="w-80 mt-3 flex items-center gap-2 rounded-2xl font-bold bg-[#2396C6] text-white p-2">
-                <Bot /> AI Property Analysis
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        
 
         <Card className="bg-white w-11/12 max-w-md rounded-2xl mt-3 shadow-lg border-none">
           <CardContent className="p-5 text-gray-800 text-sm">
