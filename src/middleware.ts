@@ -6,21 +6,26 @@ export function middleware(req: NextRequest) {
 
   console.log("🔵 Incoming Request:", pathname);
 
-  // Read ONLY client-side cookies (middleware cannot read httpOnly cookies)
+  // Read cookies - try both possible cookie names
   const clientTokenUser = req.cookies.get("client_token_partner")?.value;
 
   console.log("🔍 Cookies in middleware:", {
     clientTokenUserExists: !!clientTokenUser,
-    tokenValue: clientTokenUser || "❌ No token"
+    tokenValue: clientTokenUser || "❌ No token",
+    allCookies: req.cookies.getAll().map(c => c.name) // Debug: see all cookies
   });
 
-  // Public routes
+  // Public routes - more specific matching
   const isPublicRoute =
-    pathname.startsWith("/auth") ||
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/api") ||
+    pathname === "/" ||
+    pathname.startsWith("/auth/") ||
+    pathname.startsWith("/_next/") ||
+    pathname.startsWith("/api/") ||
     pathname === "/favicon.ico" ||
-    pathname === "/";
+    pathname.endsWith(".png") ||
+    pathname.endsWith(".jpg") ||
+    pathname.endsWith(".svg") ||
+    pathname.endsWith(".ico");
 
   console.log("📌 Route check:", {
     pathname,
@@ -39,17 +44,39 @@ export function middleware(req: NextRequest) {
     const loginUrl = new URL("/auth/login", req.url);
     loginUrl.searchParams.set("redirect", pathname);
 
-    return NextResponse.redirect(loginUrl);
+    const response = NextResponse.redirect(loginUrl);
+    
+    // IMPORTANT: Add cache control headers to prevent caching
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+
+    return response;
   }
 
-  // Token exists
+  // Token exists - allow access
   console.log("🟩 Token found → access granted");
-  return NextResponse.next();
+  
+  const response = NextResponse.next();
+  
+  // Add cache control headers to prevent stale responses
+  response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  response.headers.set('Pragma', 'no-cache');
+  response.headers.set('Expires', '0');
+  
+  return response;
 }
 
-// Apply to dashboard only
+// More specific matcher configuration
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico).*)',
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder files
+     */
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };
