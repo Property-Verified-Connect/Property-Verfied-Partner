@@ -62,6 +62,8 @@ export default function PropertyForm() {
    const [step, setStep] = useState(1);
    const [loading, setloading] = useState(false);
    const router = useRouter();
+   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+
    const BASEURL = process.env.NEXT_PUBLIC_API_URL;
 
 
@@ -83,13 +85,13 @@ export default function PropertyForm() {
      availablefor:"",
     suitablefor:"",
     socialMedia:"",
-  description:"",
-     photos: null,
-       capacity:"",
-  alreadyrent:"",
-  profession:"" ,
-  Lifestyle:"",
-  Apartmentsize:"",
+    description:"",
+    photos: null,
+    capacity:"",
+    alreadyrent:"",
+    profession:"" ,
+    Lifestyle:"",
+    Apartmentsize:"",
     location: "",
     price: "",
     
@@ -101,9 +103,19 @@ export default function PropertyForm() {
     setFormData({ ...formData, [field]: value });
   };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData({ ...formData, photos: e.target.files as FileList });
-    };
+   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const files = e.target.files;
+  setFormData({ ...formData, photos: files as FileList });
+
+  // Generate previews separately
+  if (files) {
+    const previewUrls = Array.from(files).map((file) =>
+      URL.createObjectURL(file)
+    );
+    setImagePreviews(previewUrls);
+  }
+};
+
 
 
 
@@ -232,7 +244,6 @@ const handleSubmit = async () => {
                     "Independent House / Villa",
                     "Plot / Land",
                     "Farmhouse",
-                    "Studio Apartment",
                     "Other",
                   ].map((option) => (
                     <Button
@@ -385,9 +396,13 @@ formData.propertyType =="Apartment" &&
     <Label className="text-md font-medium mt-3 ">Apartment Size </Label>
                 <div className="flex flex-wrap gap-2 mt-1">
                    {[
+                   "Studio",
                    "1 bhk",
                    "2 bhk",
-                   "3 bhk"
+                   "3 bhk",
+                   "4 bhk",
+                   "6 bhk",
+                   "Other"
                 
                   ].map((option) => (
                     <Button
@@ -520,7 +535,7 @@ formData.propertyType =="Apartment" &&
                   value={formData.Areaunit}
                 >
                   <SelectTrigger className="mt-2 w-30">
-                    <SelectValue placeholder="Select city" />
+                    <SelectValue placeholder="Area Unit" />
                   </SelectTrigger>
                   <SelectContent>
                    <SelectItem value="sqft">sq.ft</SelectItem>
@@ -643,7 +658,7 @@ formData.propertyType =="Apartment" &&
                  
 </div>
 <div>
-    <Label className="text-md font-medium mt-3 ">suitable For </Label>
+    <Label className="text-md font-medium mt-3 ">Suitable For </Label>
                 <div className="flex flex-wrap gap-2 mt-1">
                    {[
                    "Student",
@@ -703,10 +718,28 @@ formData.propertyType =="Apartment" &&
                     {formData.photos.length} file(s) selected
                   </p>  
                 )}
+
+                {imagePreviews.length > 0 && (
+  <div className="mt-6 p-4 border rounded-lg bg-gray-50">
+    <h3 className="text-sm font-medium mb-3">Preview</h3>
+
+    <div className="grid grid-cols-3 gap-3">
+      {imagePreviews.map((url, index) => (
+        <img
+          key={index}
+          src={url}
+          alt="preview"
+          className="w-32 h-32 object-cover rounded-md border"
+        />
+      ))}
+    </div>
+  </div>
+)}
+
               </div>
 
               <div>
-                <Label>Social Media Link</Label>
+                <Label> Property Social Media Link</Label>
                 <Input
                   placeholder="https://instagram.com/yourproperty"
                   value={formData.socialMedia}
@@ -716,13 +749,13 @@ formData.propertyType =="Apartment" &&
               </div>
 
               <div>
-                <Label>Property Price (₹)</Label>
+                <Label>Property { formData.lookingFor =="Sell" ? "Selling " :formData.lookingFor =="Rent / Lease" ?  "Rent": "Paying Guest"} Price (₹)</Label>
                 <Input
                   type="number"
                   placeholder="Enter price in rupees"
                   value={formData.price}
                   onChange={(e) => handleChange("price", e.target.value)}
-                  className="mt-2"
+                  className="mt-2  font-bold "
                 />
               </div>
 

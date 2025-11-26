@@ -4,6 +4,7 @@ import inter from '@/lib/font/Inter'
 import React, { useEffect, useState } from 'react'
 import { Button } from '../ui/button'
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 interface User {
     name?: string;
@@ -26,7 +27,7 @@ const UserProfile: React.FC = () => {
                 method: "POST",
                 credentials: "include",
             });
-
+           Cookies.remove("client_token_partner", { path: "/" });
             localStorage.clear();
             router.push("/auth/login");
         } catch (error) {

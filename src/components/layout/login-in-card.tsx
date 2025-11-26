@@ -9,6 +9,7 @@ import GoogleIcon from "../../../public/icons/googleicon";
 import Link from "next/link";
 import axios from "axios";
 import { useRouter } from 'next/navigation';
+import Cookies from "js-cookie";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -68,8 +69,18 @@ export default function LoginInForm() {
         const res = await axios.post(
           `${BASEURL}/api/auth/login`,
           { email: formData.email, password: formData.password , role:formData.role },
-          { withCredentials: true }
+          { withCredentials: true, 
+             headers: {
+            'Content-Type': 'application/json'
+          } }
         );
+
+
+  Cookies.set("client_token_partner",res.data.token, {
+  expires: 1,        
+  secure: true,     
+  sameSite: "strict"
+  });
         alert(res.data.message);
         router.push("/dashboard/partner");
       } catch (err: unknown) {

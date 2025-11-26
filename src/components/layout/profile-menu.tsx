@@ -1,6 +1,6 @@
 import React , {JSX} from "react";
 
-import { Building2, Flame, UserRound, ChevronRightIcon } from "lucide-react";
+import { Building2, Flame, UserRound, ChevronRightIcon, LandPlot } from "lucide-react";
 
 import Link from "next/link";
 import { Inter } from "next/font/google";
@@ -41,6 +41,9 @@ export default function PartnerDashboard(): JSX.Element {
           <Link href={"/dashboard/partner/hot-leads"}>
             <FeatureCard index={2} label="Refer Hot Leads" />
           </Link>
+            <Link href={"/dashboard/partner/partner-listed-property"}>
+            <FeatureCard index={3} label="Listed Property" />
+          </Link>
         </div>
       </div>
 
@@ -54,6 +57,7 @@ function FeatureCard({ index, label }: prop): JSX.Element {
     <Building2 key={1} size={50} color="#2396C6" />,
     <UserRound key={2} size={50} color="#2396C6" />,
     <Flame key={3} size={50} fill="#2396C6" color="#2396C6" />,
+      <LandPlot key={3} size={50}  color="#2396C6" />,
   ];
 
   return (
