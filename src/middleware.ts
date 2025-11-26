@@ -19,13 +19,11 @@ export function middleware(req: NextRequest) {
   const isPublicRoute =
     pathname === "/" ||
     pathname.startsWith("/auth/") ||
-    pathname.startsWith("/_next/") ||
-    pathname.startsWith("/api/") ||
-    pathname === "/favicon.ico" ||
-    pathname.endsWith(".png") ||
-    pathname.endsWith(".jpg") ||
-    pathname.endsWith(".svg") ||
-    pathname.endsWith(".ico");
+    pathname.startsWith("/auth") ||
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/api") ||
+    pathname.includes(".") || // Any file with extension (images, fonts, etc.)
+    pathname === "/favicon.ico";
 
   console.log("📌 Route check:", {
     pathname,
@@ -67,16 +65,16 @@ export function middleware(req: NextRequest) {
   return response;
 }
 
-// More specific matcher configuration
+// Simpler matcher configuration that works on Vercel
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
+     * Match all request paths except:
+     * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - public folder files
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };
