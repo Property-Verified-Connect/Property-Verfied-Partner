@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { getCookieValue } from "@/function/cookie";
 
 export default function useRedirectByRole() {
   const router = useRouter();
@@ -24,11 +25,16 @@ export default function useRedirectByRole() {
         //   router.replace("/auth/login");
         //   return;
         // }
+        
+    
 
         // 2️⃣ Check localStorage user data
         if (!localStorage.getItem("partnerdata")) {
           const res = await axios.get(`${BASEURL}/api/user/profile`, {
             withCredentials: true,
+            headers: {
+            "Authorization": `Bearer ${getCookieValue()}`  // <-- Add your JWT token here
+            }
           });
           localStorage.setItem("partnerdata", JSON.stringify(res.data));
         }

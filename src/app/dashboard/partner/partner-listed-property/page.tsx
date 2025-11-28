@@ -13,6 +13,7 @@ import Nav from '@/components/layout/nav'
 import { Skeleton } from '@/components/ui/skeleton'
 
 import PropertyCards2 from '@/components/shared/property-list-card'
+import { getCookieValue } from '@/function/cookie'
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
 
@@ -51,7 +52,9 @@ function Page() {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/api/partner/setAllPartnerProperty`,{withCredentials:true});
+        const response = await axios.get(`${BASE_URL}/api/partner/setAllPartnerProperty`,{withCredentials:true ,  headers: {
+                    "Authorization": `Bearer ${getCookieValue()}`  // <-- Add your JWT token here
+                    }});
         setProperties(response.data.partner_property ?? response.data ?? []);
         console.log(response.data)
         

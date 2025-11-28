@@ -1,0 +1,14 @@
+export function getCookieValue() {
+  name = 'client_token_partner'
+  const cookies = document.cookie.split('; ');
+  for (const cookie of cookies) {
+    const [key, value] = cookie.split('=');
+    if (key === name) return value;
+  }
+  return null; // cookie not found
+}
+
+
+
+
+

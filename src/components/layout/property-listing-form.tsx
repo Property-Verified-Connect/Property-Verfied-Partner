@@ -34,6 +34,7 @@ import {
 
 import { Textarea } from "../ui/textarea";
 import { Upload } from "lucide-react";
+import { getCookieValue } from "@/function/cookie";
 
 interface FormDataType {
   lookingFor: string;
@@ -196,7 +197,7 @@ export default function PropertyForm() {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${getCookieValue}`,
           },
           withCredentials: true,
         }

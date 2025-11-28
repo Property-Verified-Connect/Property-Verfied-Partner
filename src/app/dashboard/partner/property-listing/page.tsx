@@ -17,9 +17,6 @@ import inter from "@/lib/font/Inter";
 
 export default function PropertyDetailsForm() {
  
-
-
-
   return (
     <>
     <Nav/>

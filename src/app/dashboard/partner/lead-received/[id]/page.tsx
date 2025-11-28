@@ -35,6 +35,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
  import { useRouter } from "next/navigation";
+import { getCookieValue } from "@/function/cookie";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -123,7 +124,9 @@ const Page: React.FC = () => {
         const response = await axios.post<ApiResponse>(
           `${BASE_URL}/api/user/getBookingforApprovalbyID`,
           { id },
-          { withCredentials: true }
+          { withCredentials: true ,  headers: {
+            "Authorization": `Bearer ${getCookieValue()}`  // <-- Add your JWT token here
+            }}
         );
 
         setPropertyDetails(response.data.booking);
@@ -183,7 +186,10 @@ const handleContactLead = async () => {
       propertyId: propertyDetails?.id,
     },
      {
-      withCredentials:true
+      withCredentials:true,
+        headers: {
+            "Authorization": `Bearer ${getCookieValue()}`  // <-- Add your JWT token here
+            }
      });
     
      openWhatsApp(propertyDetails?.user_id.contact)
@@ -213,7 +219,9 @@ const handleMarkAsPurchase = async () => {
   try {
     const response = await axios.post(`${BASEURL}/api/partner/setBookingtoPurchase`, {
       propertyId: propertyDetails?.id,
-    });
+    },  { withCredentials: true ,  headers: {
+            "Authorization": `Bearer ${getCookieValue()}`  // <-- Add your JWT token here
+            }});
 
   
        
