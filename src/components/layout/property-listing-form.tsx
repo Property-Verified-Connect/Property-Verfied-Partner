@@ -3,10 +3,19 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {motion} from "framer-motion"
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import {
+  Car,
+  Shield,
+  Waves,
+  PawPrint,
+  Store,
+  MapPin,
+  Wifi,
+} from "lucide-react";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import axios from "axios";
 import {
   Card,
@@ -45,56 +54,63 @@ interface FormDataType {
   suitablefor: string;
   socialMedia: string;
   description: string;
-  photos: FileList | null;  // ✅ FIXED
+  photos: FileList | null; // ✅ FIXED
   location: string;
   price: string;
-  capacity:string,
-  alreadyrent:string;
-  profession:string ;
-  Lifestyle:string;
-  Apartmentsize:string ,
+  capacity: string;
+  alreadyrent: string;
+  profession: string;
+  Lifestyle: string;
+  Apartmentsize: string;
+  Options: string[];
   city?: string;
 }
 
-
 export default function PropertyForm() {
-   
-   const [step, setStep] = useState(1);
-   const [loading, setloading] = useState(false);
-   const router = useRouter();
-   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [step, setStep] = useState(1);
+  const [loading, setloading] = useState(false);
+  const router = useRouter();
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
-   const BASEURL = process.env.NEXT_PUBLIC_API_URL;
+  const BASEURL = process.env.NEXT_PUBLIC_API_URL;
+  const amenityComponents = [
+    <Car size={20} />,
+    <Shield size={20} />,
+    <Waves size={20} />,
+    <PawPrint size={20} />,
+    <Store size={20} />,
+    <MapPin size={20} />,
+    <Wifi size={20} />,
+  ];
 
-
-  const [formData, setFormData] = useState <FormDataType>({
+  const [formData, setFormData] = useState<FormDataType>({
     lookingFor: "",
     propertyKind: "",
     propertyType: "",
-    propertyName:"",
+    propertyName: "",
     bedroom: "",
-     bathroom: "",
-     balconies:"",
-     roomtype:"",
-     contact: "",
-     Area:"",
-     Areaunit:"",
-     floor:"",
-     ageproperty:"",
-     available:"",
-     availablefor:"",
-    suitablefor:"",
-    socialMedia:"",
-    description:"",
+    bathroom: "",
+    balconies: "",
+    roomtype: "",
+    contact: "",
+    Area: "",
+    Areaunit: "",
+    floor: "",
+    ageproperty: "",
+    available: "",
+    availablefor: "",
+    suitablefor: "",
+    socialMedia: "",
+    description: "",
     photos: null,
-    capacity:"",
-    alreadyrent:"",
-    profession:"" ,
-    Lifestyle:"",
-    Apartmentsize:"",
+    capacity: "",
+    alreadyrent: "",
+    profession: "",
+    Lifestyle: "",
+    Apartmentsize: "",
+    Options: [],
     location: "",
     price: "",
-    
   });
 
   const handleNext = () => setStep((prev) => prev + 1);
@@ -103,86 +119,106 @@ export default function PropertyForm() {
     setFormData({ ...formData, [field]: value });
   };
 
-   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const files = e.target.files;
-  setFormData({ ...formData, photos: files as FileList });
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    setFormData({ ...formData, photos: files as FileList });
 
-  // Generate previews separately
-  if (files) {
-    const previewUrls = Array.from(files).map((file) =>
-      URL.createObjectURL(file)
-    );
-    setImagePreviews(previewUrls);
-  }
-};
-
-
-
-
-const handleSubmit = async () => {
-  
-   setloading(true)
-  
-  try {
-    const fd = new FormData();
-
-    // append fields (strings)
-  for (const key of [
-  'lookingFor','propertyKind','propertyType','propertyName','contact','city','location',
-  'bedroom','bathroom','balconies','roomtype','Area','Areaunit',
-  'floor','ageproperty','available','availablefor','suitablefor',  'capacity',
-  'alreadyrent',
-  'profession', 
-  'Lifestyle',
-  'Apartmentsize',
-  'socialMedia','price','description'
-] as (keyof FormDataType)[]) {    // 👈 Added assertion
-  const value = formData[key];
-  if (value !== undefined && value !== null) {
-    fd.append(key, String(value)); // 👈 Convert to string to satisfy FormData
-  }
-}
-
-  
-    // append files (input name is 'photos' because server expects that)
-    if (formData.photos && formData.photos.length) {
-      for (let i = 0; i < formData.photos.length; i++) {
-        fd.append('photos', formData.photos[i]); // same field name for each file
-      }
+    // Generate previews separately
+    if (files) {
+      const previewUrls = Array.from(files).map((file) =>
+        URL.createObjectURL(file)
+      );
+      setImagePreviews(previewUrls);
     }
+  };
 
-    console.log("Printing Form Data" , fd)
+  const handleSubmit = async () => {
+    setloading(true);
 
-    // Get token from wherever you store it (example)
-    const token = localStorage.getItem('sb_access_token') || ''; // replace with your storage key
+    try {
+      const fd = new FormData();
 
-    const response = await axios.post(
-      `${BASEURL}/api/partner/insertPropertyinDB`,
-      fd,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
-        },
-        withCredentials: true,
+      // append fields (strings)
+      for (const key of [
+        "lookingFor",
+        "propertyKind",
+        "propertyType",
+        "propertyName",
+        "contact",
+        "city",
+        "location",
+        "bedroom",
+        "bathroom",
+        "balconies",
+        "roomtype",
+        "Area",
+        "Areaunit",
+        "floor",
+        "ageproperty",
+        "available",
+        "availablefor",
+        "suitablefor",
+        "capacity",
+        "alreadyrent",
+        "profession",
+        "Lifestyle",
+        "Apartmentsize",
+        "socialMedia",
+        "price",
+        "description",
+      ] as (keyof FormDataType)[]) {
+        // 👈 Added assertion
+        const value = formData[key];
+        if (value !== undefined && value !== null) {
+          fd.append(key, String(value)); // 👈 Convert to string to satisfy FormData
+        }
       }
-    );
 
-    alert('✅ Form Submitted Successfully!');
-    router.push("/dashboard/partner")
-    
-    console.log('Response:', response.data);
-  } catch (error) {
-     if (axios.isAxiosError(error)) {
-    console.error("❌ Error submitting form:", error.response ?? error.message);
-  } else {
-    console.error("❌ Unknown error:", error);
-  }
-  alert("Something went wrong while submitting the form.");
-    alert('Something went wrong while submitting the form.');
-  }
-};
+      formData.Options.forEach((option) => {
+        fd.append("Options", option);
+      });
 
+      // append files (input name is 'photos' because server expects that)
+      if (formData.photos && formData.photos.length) {
+        for (let i = 0; i < formData.photos.length; i++) {
+          fd.append("photos", formData.photos[i]); // same field name for each file
+        }
+      }
+
+      console.log("Printing Form Data", fd);
+
+      // Get token from wherever you store it (example)
+      const token = localStorage.getItem("sb_access_token") || ""; // replace with your storage key
+
+      const response = await axios.post(
+        `${BASEURL}/api/partner/insertPropertyinDB`,
+        fd,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+
+      alert("✅ Form Submitted Successfully!");
+      router.push("/dashboard/partner");
+
+      console.log("Response:", response.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error(
+          "❌ Error submitting form:",
+          error.response ?? error.message
+        );
+      } else {
+        console.error("❌ Unknown error:", error);
+      }
+      alert("Something went wrong while submitting the form.");
+      alert("Something went wrong while submitting the form.");
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-start justify-center  px-2 ">
@@ -195,22 +231,32 @@ const handleSubmit = async () => {
 
         <CardContent className="space-y-6">
           {step === 1 && (
-            <motion.div initial={{opacity:0}} animate={{x:10 ,opacity:1}}  className="space-y-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ x: 10, opacity: 1 }}
+              className="space-y-6"
+            >
               <div>
-                <Label className="text-md font-medium">You’re looking to?</Label>
+                <Label className="text-md font-medium">
+                  You’re looking to?
+                </Label>
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {["Sell", "Rent / Lease", "Paying Guest"].map((option) => (
-                    <Button
-                      key={option}
-                      variant={
-                        formData.lookingFor === option ? "selectdashed" : "select"
-                      }
-                      onClick={() => handleChange("lookingFor", option)}
-                    size={"sm"}
-                    >
-                      {option}
-                    </Button>
-                  ))}
+                  {["Sell", "Rent / Lease", "Paying Guest", "Resell"].map(
+                    (option) => (
+                      <Button
+                        key={option}
+                        variant={
+                          formData.lookingFor === option
+                            ? "selectdashed"
+                            : "select"
+                        }
+                        onClick={() => handleChange("lookingFor", option)}
+                        size={"sm"}
+                      >
+                        {option}
+                      </Button>
+                    )
+                  )}
                 </div>
               </div>
 
@@ -223,9 +269,11 @@ const handleSubmit = async () => {
                     <Button
                       key={option}
                       variant={
-                        formData.propertyKind === option ?  "selectdashed" : "select"
+                        formData.propertyKind === option
+                          ? "selectdashed"
+                          : "select"
                       }
-                       size={"sm"}
+                      size={"sm"}
                       onClick={() => handleChange("propertyKind", option)}
                     >
                       {option}
@@ -249,10 +297,11 @@ const handleSubmit = async () => {
                     <Button
                       key={option}
                       variant={
-                        formData.propertyType === option ?
-                        "selectdashed" : "select"
+                        formData.propertyType === option
+                          ? "selectdashed"
+                          : "select"
                       }
-                       size={"sm"}
+                      size={"sm"}
                       onClick={() => handleChange("propertyType", option)}
                     >
                       {option}
@@ -275,11 +324,13 @@ const handleSubmit = async () => {
           )}
 
           {step === 2 && (
-            <motion.div initial={{opacity:0}} animate={{x:10 ,opacity:1}} className="space-y-6">
-                 <div>
-                <Label className="text-md font-medium">
-                  Property Name
-                </Label>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ x: 10, opacity: 1 }}
+              className="space-y-6"
+            >
+              <div>
+                <Label className="text-md font-medium">Property Name</Label>
                 <Input
                   placeholder="Enter Property Name"
                   value={formData.propertyName}
@@ -288,9 +339,7 @@ const handleSubmit = async () => {
                 />
               </div>
               <div>
-                <Label className="text-md font-medium">
-                  Property Location
-                </Label>
+                <Label className="text-md font-medium">Property Location</Label>
                 <Input
                   placeholder="Enter location"
                   value={formData.location}
@@ -317,380 +366,388 @@ const handleSubmit = async () => {
                 </Select>
               </div>
 
-    <div>
-         <Label className="text-md font-medium mb-2 ">Add Room Details </Label>
-         <Label className="text-sm font-medium text-gray-600  ">No of Bedrooms </Label>
-           <div className="flex flex-wrap gap-2 mt-1 mb-3">
-                  {[
-                    1,
-                    2,
-                    3,
-                    4,
-                    "Other",
-                  ].map((option) => (
-                    <Button
-                      key={option}
-                      variant={
-                        formData.bedroom === option ?
-                        "selectdashed" : "select"
-                      }
-                       size={"sm"}
-                      onClick={() => handleChange("bedroom", option)}
-                    >
-                      {option}
-                    </Button>
-                  ))}
+              {formData.propertyType !== "Plot / Land" && (
+                <div>
+                  <Label className="text-md font-medium mb-2 ">
+                    Add Room Details{" "}
+                  </Label>
+                  <Label className="text-sm font-medium text-gray-600  ">
+                    No of Bedrooms{" "}
+                  </Label>
+                  <div className="flex flex-wrap gap-2 mt-1 mb-3">
+                    {[1, 2, 3, 4, "Other"].map((option) => (
+                      <Button
+                        key={option}
+                        variant={
+                          formData.bedroom === option
+                            ? "selectdashed"
+                            : "select"
+                        }
+                        size={"sm"}
+                        onClick={() => handleChange("bedroom", option)}
+                      >
+                        {option}
+                      </Button>
+                    ))}
+                  </div>
+                  <Label className="text-sm font-medium text-gray-600 ">
+                    No of Bathrooms{" "}
+                  </Label>
+                  <div className="flex flex-wrap gap-2 mt-1 mb-2">
+                    {[1, 2, 3, 4, "Other"].map((option) => (
+                      <Button
+                        key={option}
+                        variant={
+                          formData.bathroom === option
+                            ? "selectdashed"
+                            : "select"
+                        }
+                        size={"sm"}
+                        onClick={() => handleChange("bathroom", option)}
+                      >
+                        {option}
+                      </Button>
+                    ))}
+                  </div>
+                  <Label className="text-sm font-medium text-gray-600 ">
+                    {" "}
+                    Balconies{" "}
+                  </Label>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {[1, 2, 3, 4, "Other"].map((option) => (
+                      <Button
+                        key={option}
+                        variant={
+                          formData.balconies === option
+                            ? "selectdashed"
+                            : "select"
+                        }
+                        size={"sm"}
+                        onClick={() => handleChange("balconies", option)}
+                      >
+                        {option}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
-         <Label className="text-sm font-medium text-gray-600 ">No of Bathrooms </Label>
-           <div className="flex flex-wrap gap-2 mt-1 mb-2">
-                  {[
-                    1,
-                    2,
-                    3,
-                    4,
-                    "Other",
-                  ].map((option) => (
-                    <Button
-                      key={option}
-                      variant={
-                        formData.bathroom === option ?
-                        "selectdashed" : "select"
-                      }
-                       size={"sm"}
-                      onClick={() => handleChange("bathroom", option)}
-                    >
-                      {option}
-                    </Button>
-                  ))}
+              )}
+
+              <div>
+                {formData.propertyType == "Apartment" && (
+                  <div>
+                    <Label className="text-md font-medium mt-3 ">
+                      Apartment Size{" "}
+                    </Label>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {[
+                        "Studio",
+                        "1 bhk",
+                        "2 bhk",
+                        "3 bhk",
+                        "4 bhk",
+                        "6 bhk",
+                        "Other",
+                      ].map((option) => (
+                        <Button
+                          key={option}
+                          variant={
+                            formData.Apartmentsize === option
+                              ? "selectdashed"
+                              : "select"
+                          }
+                          size={"sm"}
+                          onClick={() => handleChange("Apartmentsize", option)}
+                        >
+                          {option}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {formData.propertyType !== "Plot / Land" && (
+                  <>
+                    <Label className="text-md font-medium mt-3 ">
+                      Room Type{" "}
+                    </Label>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {["Shared", "Private"].map((option) => (
+                        <Button
+                          key={option}
+                          variant={
+                            formData.roomtype === option
+                              ? "selectdashed"
+                              : "select"
+                          }
+                          size={"sm"}
+                          onClick={() => handleChange("roomtype", option)}
+                        >
+                          {option}
+                        </Button>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div></div>
+              <div>
+                <Label className="text-md font-medium mt-3 ">
+                  {" "}
+                  Property Capacity{" "}
+                </Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    placeholder="Property Capacity"
+                    value={formData.capacity}
+                    onChange={(e) => handleChange("capacity", e.target.value)}
+                    className="mt-2 w-40"
+                  />
                 </div>
-                <Label className="text-sm font-medium text-gray-600 "> Balconies </Label>
-           <div className="flex flex-wrap gap-2 mt-1">
-                  {[
-                    1,
-                    2,
-                    3,
-                    4,
-                    "Other",
-                  ].map((option) => (
-                    <Button
-                      key={option}
-                      variant={
-                        formData.balconies === option ?
-                        "selectdashed" : "select"
+              </div>
+
+              {formData.lookingFor == "Rent / Lease" && (
+                <div>
+                  <Label className="text-md font-medium mt-3 ">
+                    No. Already Rented{" "}
+                  </Label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      placeholder="No. Tetants"
+                      value={formData.alreadyrent}
+                      onChange={(e) =>
+                        handleChange("alreadyrent", e.target.value)
                       }
-                       size={"sm"}
-                      onClick={() => handleChange("balconies", option)}
-                    >
-                      {option}
-                    </Button>
-                  ))}
+                      className="mt-2 w-40"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {formData.lookingFor == "Rent / Lease" &&
+                formData.alreadyrent !== "0" &&
+                formData.alreadyrent !== "" && (
+                  <div>
+                    <Label className="text-md font-medium mt-3 ">
+                      Profession of the Tetants{" "}
+                    </Label>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {[
+                        "IT Professional",
+                        "Govt employee",
+                        "Student",
+                        "Business",
+                        ,
+                        "Doctor",
+                        "Other",
+                      ].map((option) => (
+                        <Button
+                          key={option}
+                          variant={
+                            formData.profession === option
+                              ? "selectdashed"
+                              : "select"
+                          }
+                          size={"sm"}
+                          onClick={() => handleChange("profession", option)}
+                        >
+                          {option}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+              <div>
+                <div>
+                  <Label className="text-md font-medium">
+                    Select Amenities
+                  </Label>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {[
+                      "Parking",
+                      "Securatey",
+                      "Pool",
+                      "Pet allowed",
+                      "Mart",
+                      "Prime Location",
+                      "Wifi",
+                    ].map((option ,inx) => (
+                      <Button
+                        key={option}
+                        variant={
+                          formData.Options.includes(option)
+                            ? "selectdashed"
+                            : "select"
+                        }
+                        size={"sm"}
+                        onClick={() => {
+                          const exists = formData.Options.includes(option);
+                          const updated = exists
+                            ? formData.Options.filter((o) => o !== option)
+                            : [...formData.Options, option];
+                          handleChange("Options", updated);
+                        }}
+                      >
+                        {amenityComponents[inx]}
+                        {option}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
 
-                 </div>
+                <Label className="text-md font-medium mt-3 ">
+                  Add Area Details{" "}
+                </Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    placeholder="Plot Area"
+                    value={formData.Area}
+                    onChange={(e) => handleChange("Area", e.target.value)}
+                    className="mt-2 w-40"
+                  />
 
-<div>
-           
-           {
-formData.propertyType =="Apartment" &&
-<div>
-    <Label className="text-md font-medium mt-3 ">Apartment Size </Label>
+                  <Select
+                    onValueChange={(value) => handleChange("Areaunit", value)}
+                    value={formData.Areaunit}
+                  >
+                    <SelectTrigger className="mt-2 w-30">
+                      <SelectValue placeholder="Area Unit" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="sqft">sq.ft</SelectItem>
+                      <SelectItem value="sqyards">sq.yards</SelectItem>
+                      <SelectItem value="sqm">sq.m</SelectItem>
+                      <SelectItem value="acres">acres</SelectItem>
+                      <SelectItem value="marla">marla</SelectItem>
+                      <SelectItem value="cents">cents</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {formData.propertyType !== "Plot / Land" && (
+                <div>
+                  <Label className="text-md font-medium mt-3 ">
+                    Floor Detials{" "}
+                  </Label>
+                  <p className="text-xs text-gray-400">
+                    Total no of floors and your floor details
+                  </p>
+                  <Input
+                    placeholder="Total Floor"
+                    value={formData.floor}
+                    onChange={(e) => handleChange("floor", e.target.value)}
+                    className="mt-2 w-40"
+                  />
+                </div>
+              )}
+
+              <div>
+                <Label className="text-md font-medium mt-3 ">
+                  Age of Property{" "}
+                </Label>
+
                 <div className="flex flex-wrap gap-2 mt-1">
-                   {[
-                   "Studio",
-                   "1 bhk",
-                   "2 bhk",
-                   "3 bhk",
-                   "4 bhk",
-                   "6 bhk",
-                   "Other"
-                
-                  ].map((option) => (
-                    <Button
-                      key={option}
-                      variant={
-                        formData.Apartmentsize === option ?
-                        "selectdashed" : "select"
-                      }
-                       size={"sm"}
-                      onClick={() => handleChange("Apartmentsize", option)}
-                    >
-                      {option}
-                      
-                      
-                    </Button>
-                  ))}
-                  </div>
-                 
-</div>
-           }
-
-
-                 <Label className="text-md font-medium mt-3 ">Room Type </Label>
-                 <div className="flex flex-wrap gap-2 mt-1">
-                   {[
-                   "Shared",
-                   "Private"
-                  ].map((option) => (
-                    <Button
-                      key={option}
-                      variant={
-                        formData.roomtype === option ?
-                        "selectdashed" : "select"
-                      }
-                       size={"sm"}
-                      onClick={() => handleChange("roomtype", option)}
-                    >
-                      {option}
-                      
-                      
-                    </Button>
-                  ))}
-                  </div>
-
-
-           
-</div>
-
-<div>
-
-</div>
-<div>
-   <Label className="text-md font-medium mt-3 "> Property Capacity  </Label>
-                 <div className="flex items-center gap-2">
-                 <Input
-                  placeholder="Property Capacity"
-                  value={formData.capacity}
-                  onChange={(e) => handleChange("capacity", e.target.value)}
-                  className="mt-2 w-40"
-                />
+                  {["0-1 years", "1-5 years", "5-10 years", "10+ years"].map(
+                    (option) => (
+                      <Button
+                        key={option}
+                        variant={
+                          formData.ageproperty === option
+                            ? "selectdashed"
+                            : "select"
+                        }
+                        size={"sm"}
+                        onClick={() => handleChange("ageproperty", option)}
+                      >
+                        {option}
+                      </Button>
+                    )
+                  )}
                 </div>
-</div>
+              </div>
 
-{ 
- 
- formData.lookingFor =="Rent / Lease" &&
-  
-<div>
-   <Label className="text-md font-medium mt-3 ">No. Already Rented </Label>
-                 <div className="flex items-center gap-2">
-                 <Input
-                  placeholder="No. Tetants"
-                  value={formData.alreadyrent}
-                  onChange={(e) => handleChange("alreadyrent", e.target.value)}
-                  className="mt-2 w-40"
-                />
-                </div>
-</div>
-}
-
-
-{ 
- 
- formData.lookingFor =="Rent / Lease" && formData.alreadyrent !== "0" && formData.alreadyrent !== ""  &&
-  
-<div>
-   <Label className="text-md font-medium mt-3 ">Profession of the Tetants </Label>
-                     <div className="flex flex-wrap gap-2 mt-1">
-                   {[
-             
-                   "IT Professional",
-"Govt employee",
-"Student",
-"Business",
-,"Doctor" ,
-"Other",
-                   
-                  ].map((option) => (
-                    <Button
-                      key={option}
-                      variant={
-                        formData.profession === option ?
-                        "selectdashed" : "select"
-                      }
-                       size={"sm"}
-                      onClick={() => handleChange("profession", option)}
-                    >
-                      {option}
-                      
-                      
-                    </Button>
-                  ))}
-                  </div>
-</div>
-}
-           
-<div >
-                 <Label className="text-md font-medium mt-3 ">Add Area Details </Label>
-                 <div className="flex items-center gap-2">
-                 <Input
-                  placeholder="Plot Area"
-                  value={formData.Area}
-                  onChange={(e) => handleChange("Area", e.target.value)}
-                  className="mt-2 w-40"
-                />
-           
-           
-                <Select
-                  onValueChange={(value) => handleChange("Areaunit", value)}
-                  value={formData.Areaunit}
-                >
-                  <SelectTrigger className="mt-2 w-30">
-                    <SelectValue placeholder="Area Unit" />
-                  </SelectTrigger>
-                  <SelectContent>
-                   <SelectItem value="sqft">sq.ft</SelectItem>
-<SelectItem value="sqyards">sq.yards</SelectItem>
-<SelectItem value="sqm">sq.m</SelectItem>
-<SelectItem value="acres">acres</SelectItem>
-<SelectItem value="marla">marla</SelectItem>
-<SelectItem value="cents">cents</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                 </div>
-
-           
-</div>
-
-<div>
-    <Label className="text-md font-medium mt-3 ">Floor Detials </Label>
-                <p className="text-xs text-gray-400">Total no of floors and your floor details</p> 
-                 <Input
-                  placeholder="Total Floor"
-                  value={formData.floor}
-                  onChange={(e) => handleChange("floor", e.target.value)}
-                  className="mt-2 w-40"
-                />
-</div>
-
-
-<div>
-    <Label className="text-md font-medium mt-3 ">Age of Property </Label>
-              
-                     <div className="flex flex-wrap gap-2 mt-1">
-                   {[
-                   "0-1 years",
-                   "1-5 years",
-                   "5-10 years",
-                   "10+ years"
-                  ].map((option) => (
-                    <Button
-                      key={option}
-                      variant={
-                        formData.ageproperty === option ?
-                        "selectdashed" : "select"
-                      }
-                       size={"sm"}
-                      onClick={() => handleChange("ageproperty", option)}
-                    >
-                      {option}
-                      
-                      
-                    </Button>
-                  ))}
-                  </div>
-
-</div>
-
-
-<div>
-    <Label className="text-md font-medium mt-3 ">Available form </Label>
-              <Input
+              <div>
+                <Label className="text-md font-medium mt-3 ">
+                  Available form{" "}
+                </Label>
+                <Input
                   placeholder="YYYY - MM -DD"
-                  value={formData.available }
+                  value={formData.available}
                   onChange={(e) => handleChange("available", e.target.value)}
                   className="mt-2 w-40"
-                />  
-                 
-</div>
+                />
+              </div>
 
-
-<div>
-    <Label className="text-md font-medium mt-3 ">Available for </Label>
+              <div>
+                <Label className="text-md font-medium mt-3 ">
+                  Available for{" "}
+                </Label>
                 <div className="flex flex-wrap gap-2 mt-1">
-                   {[
-                   "Girl",
-                   "Boys",
-                   "Any",
-                
-                  ].map((option) => (
+                  {["Girl", "Boys", "Any"].map((option) => (
                     <Button
                       key={option}
                       variant={
-                        formData.availablefor === option ?
-                        "selectdashed" : "select"
+                        formData.availablefor === option
+                          ? "selectdashed"
+                          : "select"
                       }
-                       size={"sm"}
+                      size={"sm"}
                       onClick={() => handleChange("availablefor", option)}
                     >
                       {option}
-                      
-                      
                     </Button>
                   ))}
-                  </div>
-                 
-</div>
+                </div>
+              </div>
 
-<div>
-    <Label className="text-md font-medium mt-3 ">Lifestyle </Label>
+              <div>
+                <Label className="text-md font-medium mt-3 ">Lifestyle </Label>
                 <div className="flex flex-wrap gap-2 mt-1">
-                   {[
-                   "Quite",
-                   "Social",
-                
-                  ].map((option) => (
+                  {["Quite", "Social"].map((option) => (
                     <Button
                       key={option}
                       variant={
-                        formData.Lifestyle === option ?
-                        "selectdashed" : "select"
+                        formData.Lifestyle === option
+                          ? "selectdashed"
+                          : "select"
                       }
-                       size={"sm"}
+                      size={"sm"}
                       onClick={() => handleChange("Lifestyle", option)}
                     >
                       {option}
-                      
-                      
                     </Button>
                   ))}
-                  </div>
-                 
-</div>
-<div>
-    <Label className="text-md font-medium mt-3 ">Suitable For </Label>
+                </div>
+              </div>
+              <div>
+                <Label className="text-md font-medium mt-3 ">
+                  Suitable For{" "}
+                </Label>
                 <div className="flex flex-wrap gap-2 mt-1">
-                   {[
-                   "Student",
-                   "Working Professionals",
-                   "Both",
-                
-                  ].map((option) => (
-                    <Button
-                      key={option}
-                      variant={
-                        formData.suitablefor === option ?
-                        "selectdashed" : "select"
-                      }
-                       size={"sm"}
-                      onClick={() => handleChange("suitablefor", option)}
-                    >
-                      {option}
-                      
-                      
-                    </Button>
-                  ))}
-                  </div>
-                 
-</div>
-
-           
-  
-
+                  {["Student", "Working Professionals", "Both"].map(
+                    (option) => (
+                      <Button
+                        key={option}
+                        variant={
+                          formData.suitablefor === option
+                            ? "selectdashed"
+                            : "select"
+                        }
+                        size={"sm"}
+                        onClick={() => handleChange("suitablefor", option)}
+                      >
+                        {option}
+                      </Button>
+                    )
+                  )}
+                </div>
+              </div>
             </motion.div>
           )}
 
-           {step === 3 && (
+          {step === 3 && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ x: 10, opacity: 1 }}
@@ -699,43 +756,40 @@ formData.propertyType =="Apartment" &&
               <div>
                 <Label>Upload Property Photos</Label>
                 <div className="relative">
-                <Input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="mt-2 "
-                />
-                 <div className=" absolute  top-3  left-54">
-                  <Upload/> 
-
-                 </div>
-
+                  <Input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="mt-2 "
+                  />
+                  <div className=" absolute  top-3  left-54">
+                    <Upload />
+                  </div>
                 </div>
-                
+
                 {formData.photos && (
                   <p className="text-xs text-gray-500 mt-1">
                     {formData.photos.length} file(s) selected
-                  </p>  
+                  </p>
                 )}
 
                 {imagePreviews.length > 0 && (
-  <div className="mt-6 p-4 border rounded-lg bg-gray-50">
-    <h3 className="text-sm font-medium mb-3">Preview</h3>
+                  <div className="mt-6 p-4 border rounded-lg bg-gray-50">
+                    <h3 className="text-sm font-medium mb-3">Preview</h3>
 
-    <div className="grid grid-cols-3 gap-3">
-      {imagePreviews.map((url, index) => (
-        <img
-          key={index}
-          src={url}
-          alt="preview"
-          className="w-32 h-32 object-cover rounded-md border"
-        />
-      ))}
-    </div>
-  </div>
-)}
-
+                    <div className="grid grid-cols-3 gap-3">
+                      {imagePreviews.map((url, index) => (
+                        <img
+                          key={index}
+                          src={url}
+                          alt="preview"
+                          className="w-32 h-32 object-cover rounded-md border"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div>
@@ -749,7 +803,17 @@ formData.propertyType =="Apartment" &&
               </div>
 
               <div>
-                <Label>Property { formData.lookingFor =="Sell" ? "Selling " :formData.lookingFor =="Rent / Lease" ?  "Rent": "Paying Guest"} Price (₹)</Label>
+                <Label>
+                  Property{" "}
+                  {formData.lookingFor == "Sell"
+                    ? "Selling "
+                    : formData.lookingFor == "Rent / Lease"
+                    ? "Rent"
+                    : formData.lookingFor == "Resell"
+                    ? "Reselling"
+                    : "Paying Guest"}{" "}
+                  Price (₹)
+                </Label>
                 <Input
                   type="number"
                   placeholder="Enter price in rupees"
@@ -764,18 +828,13 @@ formData.propertyType =="Apartment" &&
                 <Textarea
                   placeholder="Describe your property, nearby facilities, and special features..."
                   value={formData.description}
-                  onChange={(e) =>
-                    handleChange("description", e.target.value)
-                  }
+                  onChange={(e) => handleChange("description", e.target.value)}
                   className="mt-2 h-24"
                 />
               </div>
             </motion.div>
           )}
         </CardContent>
-
-
-
 
         <CardFooter className="flex justify-between">
           {step > 1 && (
@@ -790,19 +849,16 @@ formData.propertyType =="Apartment" &&
           )}
           {step === 3 && (
             <Button onClick={handleSubmit} className="ml-auto w-60">
-              {
-                loading ? 
+              {loading ? (
                 <>
-                 <div className="flex items-center justify-center  ">
-  <div className="animate-spin rounded-2xl  h-4 w-4 border-b-2 group-hover:border-[#247FBA] border-white"></div>
-</div>
- Please wait
+                  <div className="flex items-center justify-center  ">
+                    <div className="animate-spin rounded-2xl  h-4 w-4 border-b-2 group-hover:border-[#247FBA] border-white"></div>
+                  </div>
+                  Please wait
                 </>
-                :
-                
-               <h1>Submit</h1> 
-              }
-              
+              ) : (
+                <h1>Submit</h1>
+              )}
             </Button>
           )}
         </CardFooter>

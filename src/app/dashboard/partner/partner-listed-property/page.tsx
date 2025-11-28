@@ -75,7 +75,7 @@ function Page() {
 
       const matchesSearch = searchQuery === '' || 
         property.approved_property_id?.property_type?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        property.user_id?.name?.toLowerCase().includes(searchQuery.toLowerCase());
+        property.property_name.toLowerCase().includes(searchQuery.toLowerCase());
 
       return matchesStatus && matchesSearch;
     });

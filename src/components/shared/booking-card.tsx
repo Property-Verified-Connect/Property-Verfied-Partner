@@ -92,7 +92,7 @@ function BookingCards({ property, type }: BookingCardsProps) {
 
           <div className="flex items-center gap-2 mt-2">
             <span className="bg-blue-50 text-blue-700 text-xs font-medium px-2 py-1 rounded">
-              {property.property_approved.property_type}
+              {property.property_approved.property_type == "Independent House / Villa" ? "House / Villa": property.property_approved.property_type }
             </span>
             <span className="bg-gray-100 text-gray-700 text-xs font-semibold px-2 py-1 rounded">
               ₹{property.property_approved.price.toLocaleString('en-IN')}
@@ -119,22 +119,22 @@ function BookingCards({ property, type }: BookingCardsProps) {
       </div>
 
       {/* Visiting Details (if available) */}
-      {(property.visiting_date || property.visiting_time) && (
+      {(property.visit_date || property.visit_time) && (
         <>
-          <div className="border-t border-gray-100 my-3"></div>
+          <div className="my-3"></div>
           <div className="bg-amber-50 rounded-lg p-2 mb-3">
             <p className="text-xs font-medium text-amber-900 mb-1">Scheduled Visit</p>
             <div className="flex items-center gap-3 text-xs text-amber-700">
-              {property.visiting_date && (
+              {property.visit_date && (
                 <span className="flex items-center gap-1">
                   <Calendar size={12} />
-                  {formatDate(property.visiting_date)}
+                  {formatDate(property.visit_date)}
                 </span>
               )}
-              {property.visiting_time && (
+              {property.visit_time && (
                 <span className="flex items-center gap-1">
                   <Clock size={12} />
-                  {property.visiting_time}
+                  {property.visit_time}
                 </span>
               )}
             </div>

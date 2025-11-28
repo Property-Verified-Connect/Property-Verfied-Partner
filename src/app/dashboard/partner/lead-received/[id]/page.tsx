@@ -34,7 +34,7 @@ import { Badge } from "@/components/ui/badge";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
-
+ import { useRouter } from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -93,10 +93,14 @@ const Page: React.FC = () => {
   const params = useParams<{ id: string }>();
   const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
   const id = params.id;
+  const router = useRouter() 
  
 
   const [propertyDetails, setPropertyDetails] = useState<BookingDetails | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading2, setIsLoading2] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const BASEURL = process.env.NEXT_PUBLIC_API_URL
 
   const property: StaticProperty = {
     title: "Elegant 2BHK Apartment",
@@ -158,6 +162,81 @@ const Page: React.FC = () => {
   //     alert("Failed to approve booking. Please try again.");
   //   }
   // };
+
+
+const openWhatsApp = (phone) => {
+    // Ensure phone number has country code (e.g. India = +91)
+    const formattedPhone = phone.startsWith("+") ? phone : `+91${phone}`;
+    const message = encodeURIComponent(
+      `Hello ${propertyDetails?.user_id?.name}, I am contacting you regarding ${propertyDetails?.property_approved.property_name}.`
+    );
+    const url = `https://wa.me/${formattedPhone}?text=${message}`;
+    window.open(url, "_blank");
+  };
+
+
+const handleContactLead = async () => {
+  setIsLoading2(true);
+  
+  try {
+    const response = await axios.post(`${BASEURL}/api/partner/setBookingtoContact`, {
+      propertyId: propertyDetails?.id,
+    },
+     {
+      withCredentials:true
+     });
+    
+     openWhatsApp(propertyDetails?.user_id.contact)
+       router.push("/dashboard/partner/lead-received")   
+       
+       alert("Lead contacted successfully:")
+
+    console.log('Lead contacted successfully:', response.data);
+    // Handle success - update status or show success message
+    // Close dialog on success
+    setDialogOpen(false);
+    // Optionally refresh data or update local state
+    
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('Error contacting lead:', error.response?.data || error.message);
+    } else {
+      console.error('Unexpected error:', error);
+    }
+  } finally {
+    setIsLoading2(false);
+  }
+};
+
+const handleMarkAsPurchase = async () => {
+  setIsLoading2(true);
+  try {
+    const response = await axios.post(`${BASEURL}/api/partner/setBookingtoPurchase`, {
+      propertyId: propertyDetails?.id,
+    });
+
+  
+       
+       alert("Lead contacted successfully:")
+    
+    console.log('Marked as purchase successfully:', response.data);
+    // Handle success
+    setDialogOpen(false);
+    // Update UI or refresh data
+    
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('Error marking as purchase:', error.response?.data || error.message);
+    } else {
+      console.error('Unexpected error:', error);
+    }
+  } finally {
+    setIsLoading2(false);
+  }
+};
+
+
+
 
   return (
     <>
@@ -300,33 +379,69 @@ const Page: React.FC = () => {
           </Button>
 
           {/* Contact Lead Dialog */}
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className="flex-1 bg-[#2396C6] hover:bg-[#0062cc] text-white py-5 text-base rounded-xl font-medium shadow">
-                <Book />
-                Contact the Lead
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md bg-white rounded-xl">
-              <div className={`${inter.className}`}>
-                <h1 className="text-xl font-bold text-center">
-                  Contact Lead
-                </h1>
-                <h1 className="p-2 text-center">
-                  Do you want to contact the lead from{" "}
-                  <strong>{propertyDetails?.user_id.name}</strong>
-                </h1>
-                <div className="w-full flex items-center justify-center gap-10">
-                  <Button
-                    variant={"selectdashed"}
-                    className="w-[90%] mt-3 hover:bg-white hover:border-2 hover:text-gray-500"
-                  >
-                    Contact the Lead
-                  </Button>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+    <DialogTrigger asChild>
+      {propertyDetails?.status === "approved" ? (
+        <Button
+          variant={"selectdashed"}
+          className="flex-1 bg-[#2396C6] hover:bg-[#0062cc] text-white py-5 text-base rounded-xl font-medium shadow"
+        >
+          Contact the Lead
+        </Button>
+      ) : propertyDetails?.status === "contact" ? (
+        <Button
+          variant={"selectdashed"}
+          className="flex-1 bg-[#2396C6] hover:bg-[#0062cc] text-white py-5 text-base rounded-xl font-medium shadow"
+        >
+          Mark as Purchase
+        </Button>
+      ) : propertyDetails?.status === "purchase" ? (
+        <Button
+          variant={"selectdashed"}
+          className="flex-1 bg-green-500 text-white py-5 text-base rounded-xl font-medium shadow"
+          disabled
+        >
+          Already Purchase
+        </Button>
+      ) : null}
+    </DialogTrigger>
+    
+    <DialogContent className="sm:max-w-md bg-white rounded-xl">
+      <div className={`${inter.className}`}>
+        <h1 className="text-xl font-bold text-center">
+          {propertyDetails?.status === "approved" ? "Contact Lead" : "Mark as Purchase"}
+        </h1>
+        <h1 className="p-2 text-center">
+          {propertyDetails?.status === "approved" 
+            ? <>Do you want to contact the lead from <strong>{propertyDetails?.user_id.name}</strong>?</>
+            : "Do you want to mark this property as purchased?"
+          }
+        </h1>
+        
+        <div className="w-full flex items-center justify-center gap-10">
+          {propertyDetails?.status === "approved" ? (
+            <Button
+              variant={"selectdashed"}
+              onClick={handleContactLead}
+              disabled={isLoading}
+              className="w-[90%] mt-3 hover:bg-white hover:border-2 hover:text-gray-500"
+            >
+              {isLoading ? "Processing..." : "Contact the Lead"}
+            </Button>
+          ) : propertyDetails?.status === "contact" ? (
+            <Button
+              variant={"selectdashed"}
+              onClick={handleMarkAsPurchase}
+              disabled={isLoading}
+              className="w-[90%] mt-3 hover:bg-white hover:border-2 hover:text-gray-500"
+            >
+              {isLoading ? "Processing..." : "Mark as Purchase"}
+            </Button>
+          ) : null}
+        </div>
+      </div>
+    </DialogContent>
+  </Dialog>
         </div>
       </div>
     </>
