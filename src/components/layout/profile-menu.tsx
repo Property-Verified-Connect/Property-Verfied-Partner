@@ -23,9 +23,9 @@ export default function PartnerDashboard(): JSX.Element {
 
       {/* Content */}
       <div className="flex-1  px-3 py-3 min-h-screen">
-        <h1 className={`text-2xl ${inter.className} font-bold text-gray-600 flex items-center`}>
+        {/* <h1 className={`text-2xl ${inter.className} font-bold text-gray-600 flex items-center`}>
           Partner Dashboard <ChevronRightIcon />
-        </h1>
+        </h1> */}
 
         {/* Property Image */}
         <MobileHighgraph />
