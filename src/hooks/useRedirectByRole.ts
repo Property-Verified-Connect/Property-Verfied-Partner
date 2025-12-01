@@ -31,7 +31,7 @@ export default function useRedirectByRole() {
         // 2️⃣ Check localStorage user data
         if (!localStorage.getItem("partnerdata")) {
           const res = await axios.get(`${BASEURL}/api/user/profile`, {
-            withCredentials: true,
+        
             headers: {
             "Authorization": `Bearer ${getCookieValue()}`  // <-- Add your JWT token here
             }

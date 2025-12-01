@@ -51,7 +51,7 @@ function Page() {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/api/user/getApprovedBooking`,{withCredentials:true ,  headers: {
+        const response = await axios.get(`${BASE_URL}/api/user/getApprovedBooking`,{   headers: {
                     "Authorization": `Bearer ${getCookieValue()}`  // <-- Add your JWT token here
                     }});
         setProperties(response.data.booking ?? response.data ?? []);

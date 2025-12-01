@@ -145,9 +145,12 @@ export default function LoginInForm() {
               Remember me
             </h1>
           </div>
+          <Link href={"/auth/forgot-password"}>
           <h1 className={`${inter.className} text-xs font-bold text-[#247FBA]`}>
             Forgot Password?
           </h1>
+          
+          </Link>
         </div>
 
         {/* Submit Button */}
