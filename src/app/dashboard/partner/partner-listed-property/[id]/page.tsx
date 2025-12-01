@@ -121,7 +121,7 @@ const Page: React.FC = () => {
         const response = await axios.post<ApiResponse>(
           `${BASE_URL}/api/partner/getPropertiesbyID`,
           { id },
-          { withCredentials: true ,  headers: {
+          {   headers: {
             "Authorization": `Bearer ${getCookieValue()}`  // <-- Add your JWT token here
             }}
         );

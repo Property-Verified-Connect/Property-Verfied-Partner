@@ -27,7 +27,7 @@ const UserProfile: React.FC = () => {
                 method: "POST",
                 credentials: "include",
             });
-           Cookies.remove("client_token_partner", { path: "/" });
+            Cookies.remove("client_token_partner", { path: "/" });
             localStorage.clear();
             router.push("/auth/login");
         } catch (error) {

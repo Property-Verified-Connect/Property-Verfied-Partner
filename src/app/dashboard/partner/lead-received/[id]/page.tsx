@@ -187,7 +187,7 @@ const handleContactLead = async () => {
       propertyId: propertyDetails?.id,
     },
      {
-      withCredentials:true,
+      
         headers: {
             "Authorization": `Bearer ${getCookieValue()}`  // <-- Add your JWT token here
             }

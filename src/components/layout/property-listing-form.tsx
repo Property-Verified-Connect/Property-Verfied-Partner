@@ -300,7 +300,7 @@ const validateStep = (currentStep: number): boolean => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${getCookieValue()}`,
           },
-          withCredentials: true,
+          
         }
       );
           setShowUploadModal(false);
