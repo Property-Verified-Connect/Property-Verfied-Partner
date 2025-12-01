@@ -7,7 +7,7 @@ import Image from "next/image";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import inter from "@/lib/font/Inter";
-import { useSearchParams } from "next/navigation";
+
 
 
 
@@ -15,7 +15,7 @@ import { useSearchParams } from "next/navigation";
 export default function ResetPasswordForm() {
   const router = useRouter();
   const BASEURL = process.env.NEXT_PUBLIC_API_URL;
-const searchParams = useSearchParams();
+
 const hashParams = new URLSearchParams(window.location.hash.substring(1));
 const token = hashParams.get("access_token");
 console.log(token);
