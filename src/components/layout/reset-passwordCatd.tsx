@@ -15,10 +15,18 @@ import inter from "@/lib/font/Inter";
 export default function ResetPasswordForm() {
   const router = useRouter();
   const BASEURL = process.env.NEXT_PUBLIC_API_URL;
+  
+  
+const [token, setToken] = useState<string | null>(null); 
 
-const hashParams = new URLSearchParams(window.location.hash.substring(1));
-const token = hashParams.get("access_token");
-console.log(token);
+ useEffect(() => {
+    if (typeof window !== "undefined") {
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = hashParams.get("access_token");
+      setToken(accessToken);
+      console.log("Client Token:", accessToken);
+    }
+  }, []);
 
 
   const [formData, setFormData] = useState({
