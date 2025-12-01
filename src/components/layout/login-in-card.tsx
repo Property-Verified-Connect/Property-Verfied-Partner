@@ -10,6 +10,7 @@ import Link from "next/link";
 import axios from "axios";
 import { useRouter } from 'next/navigation';
 import Cookies from "js-cookie";
+import { loginUser } from "@/services/auth";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -66,22 +67,26 @@ export default function LoginInForm() {
     setloading(true);
     if (Object.keys(newErrors).length === 0) {
       try {
-        const res = await axios.post(
-          `${BASEURL}/api/auth/login`,
-          { email: formData.email, password: formData.password , role:formData.role },
-          { withCredentials: true, 
-             headers: {
-            'Content-Type': 'application/json'
-          } }
-        );
+        // const res = await axios.post(
+        //   `${BASEURL}/api/auth/login`,
+        //   { email: formData.email, password: formData.password , role:formData.role },
+        //   { withCredentials: true, 
+        //      headers: {
+        //     'Content-Type': 'application/json'
+        //   } }
+        // );
 
 
-  Cookies.set("client_token_partner",res.data.token, {
+        const res = await loginUser({email: formData.email,
+  password: formData.password,
+  role: formData.role,})
+
+  Cookies.set("client_token_partner",res.token, {
   expires: 1,        
   secure: true,     
   sameSite: "strict"
   });
-        alert(res.data.message);
+        alert(res.message);
         router.push("/dashboard/partner");
       } catch (err: unknown) {
         if (axios.isAxiosError(err)) {
