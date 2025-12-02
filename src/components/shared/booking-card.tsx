@@ -1,4 +1,4 @@
-import { Heart, MapPin, Calendar, Clock, Phone, Mail, Icon, Star } from 'lucide-react'
+import { Heart, MapPin, Calendar, Clock, Phone, Mail, Icon, Star, Grid2X2, Building, House } from 'lucide-react'
 import React from 'react'
 import inter from '@/lib/font/Inter'
 import { motion } from "framer-motion" 
@@ -91,7 +91,8 @@ function BookingCards({ property, type }: BookingCardsProps) {
           </div>
 
           <div className="flex items-center gap-2 mt-2">
-            <span className="bg-blue-50 text-blue-700 text-xs font-medium px-2 py-1 rounded">
+            <span className="bg-blue-50 text-blue-700 flex items-center gap-1 text-xs font-medium px-2 py-1 rounded">
+                             {property.property_approved.property_type == "Independent House / Villa" ? <House size={12}/>:property.property_approved.property_type == "Plot / Land" ?  <Grid2X2 size={12}/> :    <Building size={12}/>}
               {property.property_approved.property_type == "Independent House / Villa" ? "House / Villa": property.property_approved.property_type }
             </span>
             <span className="bg-gray-100 text-gray-700 text-xs font-semibold px-2 py-1 rounded">
