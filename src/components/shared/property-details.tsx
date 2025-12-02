@@ -32,6 +32,8 @@ import {
   ChevronRightIcon,
   ChevronRight,
   DoorOpen,
+  Grid2X2,
+  House,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -40,6 +42,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { Inter } from "next/font/google";
 
+
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 function PropertyDetailsPage({ propertyDetails, isLoading  , type , propertybooking }) {
@@ -47,7 +50,7 @@ function PropertyDetailsPage({ propertyDetails, isLoading  , type , propertybook
   const [imageLoaded, setImageLoaded] = useState(false);
 
   const formatPrice = (price) => {
-    if (!price) return "N/A";
+    if (!price) return       <Skeleton className='h-8 bg-[#D5E8FA] w-[60%] rounded-xl'/>;
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
@@ -73,8 +76,8 @@ function PropertyDetailsPage({ propertyDetails, isLoading  , type , propertybook
   parking: Car,
   security: Shield,
   pool: Waves,
-  'pet-friendly': PawPrint,
-  store: Store,
+  'pet allowed': PawPrint,
+  mart: Store,
   location: MapPin,
   wifi: Wifi,
 };
@@ -183,23 +186,33 @@ function PropertyDetailsPage({ propertyDetails, isLoading  , type , propertybook
           <div className="flex justify-between items-start mb-3">
             <div className="flex-1">
               <h1 className="font-bold text-gray-800 text-2xl mb-1">
-                {propertyDetails?.property_name || "Property Name"}
+                {propertyDetails?.property_name || <Skeleton className='h-8 bg-[#D5E8FA] w-full rounded-xl'/>}
               </h1>
+              {propertyDetails?.location&&propertyDetails?.city?
               <p className="text-gray-600 flex items-center gap-1 text-sm">
                 <MapPin size={16} className="text-[#007BFF]" />
-                {propertyDetails?.location}, {propertyDetails?.city}
+                 {propertyDetails?.location}, {propertyDetails?.city}
+                 
+                
               </p>
+              :
+              <Skeleton className='h-8 bg-[#D5E8FA] w-[80%] rounded-xl'/>
+
+              }
             </div>
+            {
+              propertyDetails?.property_kind &&
             <Badge className="bg-pvr text-white px-3 py-1 text-xs">
-              {propertyDetails?.property_kind}
+              {propertyDetails?.property_kind }
             </Badge>
+            }
           </div>
           
           <div className="bg-gradient-to-r  text-zinc-900  rounded-xl mt-3">
             <div className="flex items-baseline gap-1">
            
               <span className="text-3xl font-bold">
-                {formatPrice(propertyDetails?.price)}
+                {formatPrice(propertyDetails?.price) || <Skeleton className='h-8 bg-[#D5E8FA] w-[60%] rounded-xl'/>}
               </span>
               <span className="text-sm opacity-90 ml-1">
                 {propertyDetails?.looking_for === "Rent / Lease" ? "/month" : ""}
@@ -246,7 +259,7 @@ function PropertyDetailsPage({ propertyDetails, isLoading  , type , propertybook
               <h1 className='flex items-center'><strong>Description</strong> <ChevronRightIcon className='mt-0.5' size={17}/></h1>
             <div className="flex items-center  gap-1">
                <h1 className='font-normal'>
-                {propertyDetails?.description}
+                {propertyDetails?.description || <Skeleton className='h-20 bg-[#D5E8FA] w-[60%] rounded-xl'/> }
                 </h1>
             </div>
           </div>
@@ -256,7 +269,7 @@ function PropertyDetailsPage({ propertyDetails, isLoading  , type , propertybook
             
 
           
-        </CardContent>
+        </CardContent>  
       </Card>
 
       {/* Quick Facts */}
@@ -266,16 +279,16 @@ function PropertyDetailsPage({ propertyDetails, isLoading  , type , propertybook
             <Home size={20} />
             Property Overview
           </h3>
-          
+           
           <div className="grid grid-cols-2 gap-4">
             <div className="flex items-center gap-3 bg-[#F0F8FF] p-3 rounded-xl">
               <div className="bg-pvr p-2 rounded-lg">
-                <Building size={20} className="text-white" />
+                            {propertyDetails?.property_type == "Independent House / Villa" ? <House size={20} className="text-white"/>:propertyDetails?.property_type == "Plot / Land" ?  <Grid2X2 size={20} className="text-white"/> :    <Building size={20} className="text-white"/>}
               </div>
               <div>
                 <p className="text-xs text-gray-600">Type</p>
-                <p className="font-semibold text-sm text-gray-800">
-                  {propertyDetails?.property_type}
+                <p className="font-semibold text-xs text-gray-800">
+                  {propertyDetails?.property_type == "Independent House / Villa" ? "House / Villa" :propertyDetails?.property_type }
                 </p>
               </div>
             </div>
@@ -310,7 +323,7 @@ function PropertyDetailsPage({ propertyDetails, isLoading  , type , propertybook
               </div>
               <div>
                 <p className="text-xs text-gray-600">Area</p>
-                <p className="font-semibold text-sm text-gray-800">
+                <p className="font-semibold text-xs text-gray-800">
                   {propertyDetails?.area} {propertyDetails?.area_unit}
                 </p>
               </div>

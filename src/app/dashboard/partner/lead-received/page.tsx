@@ -52,7 +52,7 @@ function Page() {
     const fetchProperties = async () => {
       try {
         const response = await axios.get(`${BASE_URL}/api/user/getApprovedBooking`,{   headers: {
-                    "Authorization": `Bearer ${getCookieValue()}`  // <-- Add your JWT token here
+                    "Authorization": `Bearer ${getCookieValue()}`  
                     }});
         setProperties(response.data.booking ?? response.data ?? []);
         console.log(response.data.booking )
@@ -86,8 +86,8 @@ function Page() {
   return (
     <div>
        <Nav/>
-      <div className='min-h-screen w-full overflow-hidden bg-[#CDE4F9] py-17 px-4 flex items-center justify-start flex-col'>
-        <div className="flex items-center justify-center gap-1 md:gap-3">
+      <div className='min-h-screen w-full overflow-hidden bg-[#CDE4F9] py-17 px-10 flex items-center justify-start flex-col'>
+        <div className="flex items-center justify-center px-12 gap-1 md:gap-3 ">
           <Link href={"/dashboard/partner"}>
             <Button variant="outline" className="mb-2 rounded-full"><ArrowLeft/></Button>
           </Link>
@@ -96,8 +96,8 @@ function Page() {
             <Search size={18} className="text-gray-500" />
             <input
               type="text"
-              placeholder="Search by property name or location..."
-              className="w-67 md:w-75 px-3 py-2 text-sm outline-none bg-transparent"
+              placeholder="Search by property name or Name"
+              className="w-65 md:w-75 px-3 py-2 text-sm outline-none bg-transparent"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -111,8 +111,8 @@ function Page() {
         </div>
 
         {/* Tab Selector with Slide Animation */}
-        <div className={`${inter.className} flex items-center justify-center w-96`}>
-          <div className="inline-flex items-center justify-center gap-1 w-90 px-2  p-2 bg-gray-100 rounded-lg relative">
+        <div className={`${inter.className} flex items-center justify-center w-96 `}>
+          <div className="inline-flex items-center justify-center gap-1 w-86  p-2 bg-gray-100 rounded-lg relative">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -146,7 +146,7 @@ function Page() {
         </div>
 
         {/* Cards Container with Animations */}
-        <div className='h-full w-96 mt-5 px-3.5'>
+        <div className='h-full w-96 mt-5 px-4'>
           <AnimatePresence mode="wait">
             <motion.div
               key={selected}

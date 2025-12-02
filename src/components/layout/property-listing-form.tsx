@@ -653,7 +653,7 @@ const validateStep = (currentStep: number): boolean => {
                         "Govt employee",
                         "Student",
                         "Business",
-                        ,
+                        
                         "Doctor",
                         "Other",
                       ].map((option) => (
@@ -682,7 +682,7 @@ const validateStep = (currentStep: number): boolean => {
                   <div className="flex flex-wrap gap-2 mt-2">
                     {[
                       "Parking",
-                      "Securatey",
+                      "Security",
                       "Pool",
                       "Pet allowed",
                       "Mart",

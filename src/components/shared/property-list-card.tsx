@@ -1,8 +1,9 @@
-import { Heart, MapPin, Calendar, Clock, Phone, Mail, Icon, Star, ChevronRight, Delete, Trash } from 'lucide-react'
+import { Heart, MapPin, Calendar, Clock, Phone, Mail, Icon, Star, ChevronRight, Delete, Trash, Building, House, Square, Grid2X2 } from 'lucide-react'
 import React from 'react'
 import inter from '@/lib/font/Inter'
 import { motion } from "framer-motion" 
 import Link from 'next/link'
+import { Skeleton } from '../ui/skeleton'
 
 // Define the types for the property and its nested objects
 interface Property {
@@ -60,7 +61,7 @@ function PropertyCards2({ property, type }: BookingCardsProps) {
           <div className="flex items-start justify-between mb-1">
             <div className="flex-1 min-w-0">
               <h3 className={`${inter.className} font-semibold text-gray-900 text-sm truncate`}>
-                {property.property_name}
+                {property.property_name }
               </h3>
               <p className="flex items-center gap-1 text-xs text-gray-500 mt-0.5">
                 <MapPin size={12} />
@@ -71,7 +72,9 @@ function PropertyCards2({ property, type }: BookingCardsProps) {
           </div>
 
           <div className="flex items-center gap-2 mt-2">
-            <span className="bg-blue-50 text-blue-700 text-xs font-medium px-2 py-1 rounded">
+            <span className="bg-blue-50 text-blue-700 text-xs flex items-center gap-1 font-medium px-2 py-1 rounded">
+              
+               {property.property_type == "Independent House / Villa" ? <House size={12}/>:property.property_type == "Plot / Land" ?  <Grid2X2 size={12}/> :    <Building size={12}/>}
               {property.property_type == "Independent House / Villa" ?"House / Villa":property.property_type}
             </span>
             <span className="bg-gray-100 text-gray-700 text-xs font-semibold px-2 py-1 rounded">
