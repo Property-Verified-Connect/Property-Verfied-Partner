@@ -4,6 +4,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Cookies from "js-cookie";
+import toast from "react-hot-toast";
 
 export default function GoogleLogin() {
    
@@ -53,11 +54,18 @@ export default function GoogleLogin() {
   sameSite: "strict"
   });
   router.push("/dashboard/partner");
+  toast.success("Login successful")
+  
 
         console.log(res)
     }catch(err)
     {
-         console.error(err)
+         if (err?.response?.status == 400) {
+          toast.error("This email is already registered.");
+         }else{
+              toast.error("Login Failed !!")
+         }
+        
     }
   }
 
