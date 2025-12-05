@@ -25,15 +25,20 @@ const inter = Inter({
 interface FormData {
   contact: string;
   city: string;
+  excutiveType: string;
+  rera: string;
 }
 
 interface FormErrors {
   contact?: string;
   city?: string;
+  excutiveType?: string;
+  rera?: string;
+  idProof?: string;
 }
 
 // Indian cities list
-const INDIAN_CITIES = [
+export const INDIAN_CITIES = [
   "Mumbai",
   "Delhi",
   "Bangalore",
@@ -82,6 +87,12 @@ const INDIAN_CITIES = [
   "Kota",
 ].sort();
 
+const Excutive: [string, string, string] = [
+  "Company Owner",
+  "Company Excutive",
+  "Freelancer",
+];
+
 export default function ContactCard() {
   const router = useRouter();
   const BASEURL = process.env.NEXT_PUBLIC_API_URL;
@@ -89,8 +100,11 @@ export default function ContactCard() {
   const [formData, setFormData] = useState<FormData>({
     contact: "",
     city: "",
+    excutiveType: "",
+    rera: "",
   });
 
+  const [idProof, setIdProof] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<FormErrors>({});
 
@@ -107,7 +121,6 @@ export default function ContactCard() {
       ...prev,
       city: value,
     }));
-    // Clear city error when user selects a city
     if (errors.city) {
       setErrors((prev) => ({ ...prev, city: undefined }));
     }
@@ -129,14 +142,21 @@ export default function ContactCard() {
       newErrors.city = "City is required";
     }
 
+    if (!formData.excutiveType) {
+      newErrors.excutiveType = "Executive type is required";
+    }
+
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
+      const loadingToast = toast.loading("Updating details...");
       setLoading(true);
+
       try {
         // Get user data from localStorage
         const storedData = localStorage.getItem("partnerdata");
         if (!storedData) {
+          toast.dismiss(loadingToast);
           toast.error("User data not found");
           setLoading(false);
           return;
@@ -144,22 +164,39 @@ export default function ContactCard() {
 
         const userData = JSON.parse(storedData);
 
+        // Create FormData for multipart/form-data
+        const form = new FormData();
+        form.append("contact", formData.contact);
+        form.append("city", formData.city);
+        form.append("excutiveType", formData.excutiveType);
+        form.append("rera", formData.rera);
+
+        if (idProof) {
+          form.append("idProof", idProof);
+        }
+
         // Update user profile
         const res = await axios.post(
-          `${BASEURL}/api/auth/resetContact`,
-          {
-            contact: formData.contact,
-            city: formData.city,
-          },
+          `${BASEURL}/api/auth/resetContactpartner`,
+          form,
           {
             headers: {
-              "Authorization": `Bearer ${getCookieValue()}` // Adjust based on your auth setup
+              "Authorization": `Bearer ${getCookieValue()}`,
+              "Content-Type": "multipart/form-data",
             }
           }
         );
 
+        toast.dismiss(loadingToast);
+
         // Update localStorage with new data
-        const updatedUser = { ...userData, contact: formData.contact, city: formData.city };
+        const updatedUser = { 
+          ...userData, 
+          contact: formData.contact, 
+          city: formData.city,
+          excutiveType: formData.excutiveType,
+          rera: formData.rera
+        };
         localStorage.setItem("partnerdata", JSON.stringify(updatedUser));
 
         toast.success("Details updated successfully!");
@@ -168,8 +205,11 @@ export default function ContactCard() {
         window.location.reload();
 
       } catch (err: unknown) {
+        toast.dismiss(loadingToast);
+        
         if (axios.isAxiosError(err)) {
-          toast.error(err.response?.data?.error ?? err.message);
+          const errorMsg = err.response?.data?.error || err.response?.data?.message || err.message;
+          toast.error(errorMsg);
         } else if (err instanceof Error) {
           toast.error(err.message);
         } else {
@@ -183,8 +223,6 @@ export default function ContactCard() {
 
   return (
     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-md p-6 w-[95%] md:w-[30rem] bg-white rounded-lg shadow-md">
-    
-    
       <div className={`${inter.className} flex items-center justify-center flex-col`}>
         <h2 className={`${inter.className} text-[#247FBA] text-2xl font-bold mb-6 text-center`}>
           Complete Your Profile
@@ -235,6 +273,60 @@ export default function ContactCard() {
           {errors.city && (
             <p className="text-red-500 text-sm mt-1">{errors.city}</p>
           )}
+        </div>
+
+        {/* Executive Type */}
+        <div>
+          <Label htmlFor="excutiveType" className="mb-2 text-[#247FBA]">
+            Type of Executive
+          </Label>
+          <Select
+            onValueChange={(value: string) =>
+              setFormData((prev) => ({ ...prev, excutiveType: value }))
+            }
+            value={formData.excutiveType}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select executive type" />
+            </SelectTrigger>
+            <SelectContent className="max-h-[200px]">
+              {Excutive.map((type) => (
+                <SelectItem key={type} value={type}>
+                  {type}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {errors.excutiveType && (
+            <p className="text-red-500 text-sm mt-1">{errors.excutiveType}</p>
+          )}
+        </div>
+        
+        {/* ID Proof Upload */}
+        <div>
+          <Label className="mb-2 text-[#247FBA]">Upload ID Proof</Label>
+          <Input
+            id="idProof"
+            name="idProof"
+            type="file"
+            accept="image/*,.pdf"
+            onChange={(e) => setIdProof(e.target.files?.[0] || null)}
+          />
+        </div>
+
+        {/* RERA Number */}
+        <div>
+          <Label htmlFor="rera" className="mb-2 text-[#247FBA]">
+            Rera Number (Optional)
+          </Label>
+          <Input
+            id="rera"
+            name="rera"
+            type="text"
+            placeholder="Enter Rera Number"
+            value={formData.rera}
+            onChange={handleChange}
+          />
         </div>
 
         {/* Submit Button */}
