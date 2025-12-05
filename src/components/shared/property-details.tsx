@@ -41,6 +41,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { Inter } from "next/font/google";
+import SliderImage from './sliderImage';
 
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -158,18 +159,14 @@ function PropertyDetailsPage({ propertyDetails, isLoading  , type , propertybook
         <div className="relative">
           {propertyDetails && !isLoading ? (
             <div className={`transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}>
-              <img
-                src={propertyDetails.photos?.[0]}
-                alt={propertyDetails.property_name}
-                onLoad={() => setImageLoaded(true)}
-                className="w-full h-80 object-cover rounded-2xl shadow-lg"
-              />
-              <div className="absolute top-3 left-3 bg-white/95 backdrop-blur px-3 py-1.5 rounded-full shadow-md">
+         
+              <SliderImage Image={propertyDetails.photos} setImageLoaded={setImageLoaded} />
+              <div className="absolute top-3 z-99 left-3 bg-white/95 backdrop-blur px-3 py-1.5 rounded-full shadow-md">
                 <span className="text-[#007BFF] font-bold text-sm">
                   {propertyDetails.looking_for}
                 </span>
               </div>
-              <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur text-xs px-3 py-1.5 rounded-full shadow-md font-semibold flex items-center gap-1.5">
+              <div className="absolute bottom-3 z-99 left-3 bg-white/95 backdrop-blur text-xs px-3 py-1.5 rounded-full shadow-md font-semibold flex items-center gap-1.5">
                 <CircleCheck size={16} className="text-green-600" />
                 <span className="text-gray-700">Verified Listing</span>
               </div>

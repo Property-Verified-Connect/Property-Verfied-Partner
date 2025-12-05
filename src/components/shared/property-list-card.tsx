@@ -4,6 +4,7 @@ import inter from '@/lib/font/Inter'
 import { motion } from "framer-motion" 
 import Link from 'next/link'
 import { Skeleton } from '../ui/skeleton'
+import SliderImage from './sliderImage'
 
 // Define the types for the property and its nested objects
 interface Property {
@@ -56,6 +57,9 @@ function PropertyCards2({ property, type }: BookingCardsProps) {
             {property.status}
           </span>
         </div>
+
+     
+
 
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between mb-1">
