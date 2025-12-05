@@ -13,7 +13,6 @@ interface LoginProps {
 
 export async function loginUser({ email, password, role }: LoginProps) {
   try {
-
     const res = await axios.post(
       `${BASEURL}/api/auth/login`,
       { email, password, role },
@@ -25,16 +24,20 @@ export async function loginUser({ email, password, role }: LoginProps) {
       }
     );
     
-    console.log(res)
+    console.log(res);
     return res.data;
   } catch (error: unknown) {
     const err = error as AxiosError<any>;
 
     console.error("Login error:", err);
 
-    // ❗ server actions MUST throw an Error, not objects
-      throw new Error(
-     "Login failed. Try again."
-  );
+    // Extract the error message from the server response
+    const errorMessage = 
+      err.response?.data?.message || 
+      err.response?.data?.error || 
+      err.message || 
+      "Login failed. Please try again.";
+
+    throw new Error(errorMessage);
   }
 }

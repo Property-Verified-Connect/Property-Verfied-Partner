@@ -4,10 +4,12 @@ import React from 'react'
 function page() {
   return (
    
-          <div className='container min-h-screen w-full '>
-
-
+          <div id='contain' className='container w-full h-screen'>
+ <div className='h-screen w-full  '>
  <LoginInForm/>
+
+ </div>
+ 
 
           </div>
     
