@@ -25,6 +25,35 @@
  min-height: 120vh;
 }
 
+.mySwiper .swiper-pagination-bullet-active {
+  background: #CDE4F9!important; /* White color for the active dot */
+}
+
+
+:root {
+  /* 1. Navigation Arrows */
+  --swiper-navigation-color: #000000; /* Deep Black color */
+  --swiper-navigation-size: 28px; /* Slightly larger size */
+  
+  /* 2. Pagination Dots */
+  --swiper-pagination-color: #000000; /* Active dot color: Black */
+  /* Optional: Adjust spacing and size for better look */
+  --swiper-pagination-bullet-size: 10px;
+  --swiper-pagination-bullet-horizontal-gap: 6px;
+}
+
+/* Optional: To give the arrows a solid black circle background */
+.mySwiper .swiper-button-next,
+.mySwiper .swiper-button-prev {
+  background-color: rgba(255, 255, 255, 0.7); /* White, semi-transparent background */
+  padding: 12px; /* Adds space around the arrow */
+  border-radius: 50%; /* Makes it a circle */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  transition: background-color 0.3s;
+  transform: scale(0.7);
+}
+
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
