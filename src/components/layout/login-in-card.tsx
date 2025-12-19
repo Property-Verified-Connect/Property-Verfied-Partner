@@ -76,6 +76,8 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       role: formData.role,
     });
 
+      
+    localStorage.clear() 
     Cookies.set("client_token_partner", res.token, {
       expires: 1,
       secure: true,
@@ -86,7 +88,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     router.push("/dashboard/partner");
   } catch (err) {
     toast.error(
-      err instanceof Error ? err.message : "Something went wrong"
+       "Something went wrong"  
     );
   } finally {
     setloading(false);
