@@ -3,7 +3,7 @@ import React from 'react'
 
 function page() {
   return (
-    <div className='container2  min-h-screen   w-full '>
+    <div className='container2  min-h-screen flex items-center justify-center  w-full '>
       
 <SignInForm/>
 

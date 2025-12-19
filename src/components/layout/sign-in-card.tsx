@@ -18,7 +18,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { INDIAN_CITIES } from "./Contactcard";
-import { CloudHail } from "lucide-react";
+import { CloudHail, Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 
@@ -41,17 +41,20 @@ type FormData = {
   terms: boolean;
 };
 
-type Errors = Record<string, string>;
+  type Errors = Record<string, string>;
 
-export default function SignInForm(): JSX.Element {
-  const router = useRouter();
-  const [idProof, setIdProof] = useState<File | null>(null);
+  export default function SignInForm(): JSX.Element {
+    const router = useRouter();
+    const [idProof, setIdProof] = useState<File | null>(null);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showPasswordConfrom, setShowPasswordConfrom] = useState(false);
+    
 
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    email: "",
-    contact: "",
-    CompanyName:"",
+    const [formData, setFormData] = useState<FormData>({
+      name: "",
+      email: "",
+      contact: "",
+      CompanyName:"",
     city: "",
     password: "",
     confirmPassword: "",
@@ -157,7 +160,7 @@ export default function SignInForm(): JSX.Element {
   };
 
   return (
-    <div className=" absolute min-h-screen  top-[70%] left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-md p-6  w-94 md:w-[29rem] bg-white rounded-lg shadow-md">
+    <div className=" absolute min-h-screen  max-w-md p-6  w-94 md:w-[29rem] bg-white rounded-lg shadow-md">
       <div className="h-20 w-60  m-auto flex items-center justify-center">
         <Image
           src="/image/Logo.png"
@@ -219,9 +222,9 @@ export default function SignInForm(): JSX.Element {
         </div>
 
         {/* Contact */}
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex md:flex-row flex-col gap-3">
           <div>
-            <Label htmlFor="contact" className="mb-2 text-[#247FBA]">
+            <Label htmlFor="contact" className="mb-2  text-[#247FBA]">
               Contact
             </Label>
             <Input
@@ -231,6 +234,7 @@ export default function SignInForm(): JSX.Element {
               placeholder="Enter Contact No."
               value={formData.contact}
               onChange={handleChange}
+            
             />
             {errors.contact && (
               <p className="text-red-500 text-sm">{errors.contact}</p>
@@ -267,7 +271,7 @@ export default function SignInForm(): JSX.Element {
               }
               value={formData.city}
             >
-              <SelectTrigger className="w-50">
+              <SelectTrigger className="w-full md:w-50 ">
                 <SelectValue placeholder="Select your city" />
               </SelectTrigger>
               <SelectContent className="max-h-[200px]">
@@ -358,14 +362,14 @@ export default function SignInForm(): JSX.Element {
         </div>
 
         {/* Password */}
-        <div>
+        <div className="relative">
           <Label htmlFor="password" className="mb-2 text-[#247FBA]">
             Password
           </Label>
           <Input
             id="password"
             name="password"
-            type="password"
+         type={showPassword ? "text" : "password"}
             placeholder="Enter password"
             value={formData.password}
             onChange={handleChange}
@@ -373,17 +377,24 @@ export default function SignInForm(): JSX.Element {
           {errors.password && (
             <p className="text-red-500 text-sm">{errors.password}</p>
           )}
+             <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-2 bottom-2  text-gray-600 hover:text-[#247FBA]"
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
         </div>
 
         {/* Re-enter Password */}
-        <div>
+        <div  className="relative">
           <Label htmlFor="confirmPassword" className="mb-2 text-[#247FBA]">
             Re-enter Password
           </Label>
           <Input
             id="confirmPassword"
             name="confirmPassword"
-            type="password"
+          type={showPasswordConfrom ? "text" : "password"}
             placeholder="Re-enter password"
             value={formData.confirmPassword}
             onChange={handleChange}
@@ -391,6 +402,13 @@ export default function SignInForm(): JSX.Element {
           {errors.confirmPassword && (
             <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
           )}
+           <button
+              type="button"
+              onClick={() => setShowPasswordConfrom(!showPasswordConfrom)}
+              className="absolute right-2 bottom-2  text-gray-600 hover:text-[#247FBA]"
+            >
+              {showPasswordConfrom ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
         </div>
 
         {/* Terms & Conditions */}
