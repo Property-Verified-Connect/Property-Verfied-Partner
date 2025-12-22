@@ -311,6 +311,65 @@ function PropertyDetailsPage({
         </CardContent>
       </Card>
 
+    {
+  type == "lead" && 
+  <Card className="bg-white w-11/12 max-w-md rounded-2xl shadow-lg border-none mb-3">
+    <CardContent className="p-5">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-gray-800">AI Description</h3>
+        <span className="text-xs bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full font-medium">
+          Active Lead
+        </span>
+      </div>
+
+      {/* Purchase Rate */}
+      <div className="mb-4">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-medium text-gray-600">Purchase Rate</span>
+          <span className="text-2xl font-bold text-gray-800">78%</span>
+        </div>
+        <div className="w-full bg-gray-200 rounded-full h-2.5">
+          <div 
+            className="bg-gradient-to-r from-[#3297db] to-[#3699db] h-2.5 rounded-full transition-all duration-300"
+            style={{ width: '78%' }}
+          />
+        </div>
+        <p className="text-xs text-gray-500 mt-1">High conversion probability</p>
+      </div>
+
+      {/* Behavior Type */}
+      <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+            <span className="text-purple-600 text-sm">🎯</span>
+          </div>
+          <div>
+            <p className="text-sm font-medium text-gray-800">Behavior Type</p>
+            <p className="text-xs text-gray-500">Engagement Pattern</p>
+          </div>
+        </div>
+        <p className="text-sm text-gray-700">
+          <span className="font-semibold">Frequent Browser</span> - Multiple visits, high page engagement
+        </p>
+      </div>
+
+      {/* Description */}
+      <div className="border-t pt-4">
+        <p className="text-xs font-medium text-gray-600 mb-2">Why Add This Lead?</p>
+       <p>
+        Strategic lead cluster identified across key Maharashtra cities (Mumbai, Nagpur) with 3 matching profiles. Professional demographics include established Business Owners and Software Engineers, indicating strong purchasing power. Lifestyle analysis shows predominantly social individuals with one quiet preference, suggesting varied engagement strategies may be needed. Family composition spans from single professionals living independently to families with children, presenting opportunities for both individual and family-oriented product positioning.
+       </p>
+      </div>
+
+     
+    </CardContent>
+  </Card>
+}
+    
+
+
+
       {/* Quick Facts */}
       <Card className="bg-white w-11/12 max-w-md rounded-2xl shadow-lg border-none mb-3">
         <CardContent className="p-5">
