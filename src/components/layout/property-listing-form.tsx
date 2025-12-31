@@ -86,6 +86,12 @@ interface FormDataType {
   openSide: string;
   construction: string;
   sanctionNo: string;
+  isNoise: string;
+  Foodpreference: string;
+  DrinksAndSmokeAllowed: string;
+  RoomatePerfer: string;
+  CurrentRole: string;
+  Religion: string;
   sanctionType: string;
   brochure: string;
   Options: string[];
@@ -158,6 +164,12 @@ export default function PropertyForm() {
     openSide: "",
     construction: "",
     location: "",
+    isNoise:"",
+    Foodpreference: " ",
+    DrinksAndSmokeAllowed: "",
+    RoomatePerfer: "",
+    CurrentRole: "",
+    Religion: "",
     sanctionType: "",
     sanctionNo: "",
     price: "",
@@ -198,15 +210,15 @@ export default function PropertyForm() {
 
       // if (!formData.capacity)
       //   newErrors.capacity = "Property capacity is required";
-      
-        if(formData.propertyType == "Independent House / Villa" ||  formData.propertyType == "Framhouse" ||  formData.propertyType == "Other")
-        {
 
-          if (!formData.Area) newErrors.Area = "Area is required";
-          if (!formData.Areaunit) newErrors.Areaunit = "Area unit is required";
-        }
-      
-         
+      if (
+        formData.propertyType == "Independent House / Villa" ||
+        formData.propertyType == "Framhouse" ||
+        formData.propertyType == "Other"
+      ) {
+        if (!formData.Area) newErrors.Area = "Area is required";
+        if (!formData.Areaunit) newErrors.Areaunit = "Area unit is required";
+      }
 
       if (formData.propertyType === "Apartment" && !formData.CarpetArea) {
         newErrors.CarpetArea = "Carpet Area required";
@@ -239,17 +251,28 @@ export default function PropertyForm() {
           newErrors.breathPlot = "Breath of Plot is required";
         }
 
-        if (
-          !formData.construction ||
-          !formData.openSide 
-        ) {
+        if (!formData.construction || !formData.openSide) {
           newErrors.plot1 = "Field is required";
         }
         if (!formData.openSide) {
           newErrors.plot2 = "Field is required";
         }
-       
       }
+         
+        if (formData.lookingFor == "Rent / Lease"  ) {
+          if (!formData.alreadyrent) newErrors.alreadyrent = "Tenant No. required";
+          if (!formData.roomtype) newErrors.roomtype = " Roomtype required";
+          if (!formData.isNoise) newErrors.isNoise = "Noise Level are required";
+             if (!formData.Foodpreference || formData.Foodpreference.trim() === "") 
+          newErrors.Foodpreference = "Food preference is required";
+            if (!formData.DrinksAndSmokeAllowed) newErrors.DrinksAndSmokeAllowed = "Habit detail  required";
+              if (!formData.RoomatePerfer) newErrors.RoomatePerfer = "Roommate preference detail  required";
+                if (!formData.Religion) newErrors.Religion = " Tenant Religion Detial  detail  required";
+      }
+    
+
+
+
 
       if (formData.propertyType !== "Plot / Land" && !formData.floor) {
         newErrors.floor = "Floor details are required";
@@ -257,16 +280,13 @@ export default function PropertyForm() {
       if (formData.propertyType === "Apartment" && !formData.Apartmentsize) {
         newErrors.ApartmentSize = "Appartment required";
       }
-          if (!formData.sanctionType)
+      if (!formData.sanctionType)
         newErrors.sanctionType = "Type of the sanction is required";
-        
-          if(formData.sanctionType && formData.sanctionType !== "Other")
-            {
-              if (!formData.sanctionNo)
-            newErrors.sanctionNo = " Sanction No. is required";
 
-            }   
-
+      if (formData.sanctionType && formData.sanctionType !== "Other") {
+        if (!formData.sanctionNo)
+          newErrors.sanctionNo = " Sanction No. is required";
+      }
 
       if (!formData.ageproperty)
         newErrors.ageproperty = "Age of property is required";
@@ -396,6 +416,12 @@ export default function PropertyForm() {
         "Boundary",
         "openSide",
         "construction",
+        "isNoise",
+        "Foodpreference",
+        "DrinksAndSmokeAllowed",
+        "RoomatePerfer",
+        "CurrentRole",
+        "Religion",
         "sanctionType",
         "sanctionNo",
         "price",
@@ -838,19 +864,16 @@ export default function PropertyForm() {
                   </>
                 )}
 
-                {
-   ( formData.propertyType == "Independent House / Villa" ||  formData.propertyType == "Framhouse" ||  formData.propertyType == "Other") &&
-                <>
-                <Label className="text-md font-medium mt-4  ">
-                    Area
-                  </Label>
-                     <div className="flex items-center gap-2">
+                {(formData.propertyType == "Independent House / Villa" ||
+                  formData.propertyType == "Framhouse" ||
+                  formData.propertyType == "Other") && (
+                  <>
+                    <Label className="text-md font-medium mt-4  ">Area</Label>
+                    <div className="flex items-center gap-2">
                       <Input
                         placeholder="Area"
                         value={formData.Area}
-                        onChange={(e) =>
-                          handleChange("Area", e.target.value)
-                        }
+                        onChange={(e) => handleChange("Area", e.target.value)}
                         type="number"
                         className="mt-2 w-40"
                       />
@@ -875,13 +898,11 @@ export default function PropertyForm() {
                       </Select>
                     </div>
                     <div className="flex gap-20">
-
-                    <ErrorMessage error={errors.Area} />
+                      <ErrorMessage error={errors.Area} />
                       <ErrorMessage error={errors.Areaunit} />
                     </div>
                   </>
-          
-          }
+                )}
 
                 <div>
                   <Label className="text-md font-medium mt-4  ">
@@ -910,24 +931,25 @@ export default function PropertyForm() {
                   {/* <ErrorMessage error={errors.city} /> */}
                   <ErrorMessage error={errors.sanctionType} />
 
-                {formData.sanctionType && formData.sanctionType !== "Other" && (
-  <div>
-    <Label className="text-sm font-medium mt-3">
-      Enter Sanction No. {formData.sanctionType}
-    </Label>
-    <div className="flex items-center gap-2">
-      <Input
-        placeholder={`${formData.sanctionType} No.`}
-        value={formData.sanctionNo}
-        onChange={(e) => handleChange("sanctionNo", e.target.value)}
-        className="mt-2 w-50"
-      />
-    </div>
-    <ErrorMessage error={errors.sanctionNo} />
-  </div>
-)}
-
-
+                  {formData.sanctionType &&
+                    formData.sanctionType !== "Other" && (
+                      <div>
+                        <Label className="text-sm font-medium mt-3">
+                          Enter Sanction No. {formData.sanctionType}
+                        </Label>
+                        <div className="flex items-center gap-2">
+                          <Input
+                            placeholder={`${formData.sanctionType} No.`}
+                            value={formData.sanctionNo}
+                            onChange={(e) =>
+                              handleChange("sanctionNo", e.target.value)
+                            }
+                            className="mt-2 w-50"
+                          />
+                        </div>
+                        <ErrorMessage error={errors.sanctionNo} />
+                      </div>
+                    )}
                 </div>
 
                 {formData.propertyType !== "Plot / Land" && (
@@ -1098,7 +1120,7 @@ export default function PropertyForm() {
                 {formData.propertyType !== "Plot / Land" && (
                   <>
                     <Label className="text-md font-medium mt-3 ">
-                      Room Type (Optional){" "}
+                      Room Type {formData.lookingFor == "Rent / Lease" ?"(Optional)":""}{" "}
                     </Label>
                     <div className="flex flex-wrap gap-2 mt-1">
                       {["Shared", "Private"].map((option) => (
@@ -1116,6 +1138,7 @@ export default function PropertyForm() {
                         </Button>
                       ))}
                     </div>
+                      <ErrorMessage error={errors.roomtype} />
                   </>
                 )}
               </div>
@@ -1136,11 +1159,18 @@ export default function PropertyForm() {
                 </div>
               </div>
 
+              <hr />
+              <Label className="text-xl font-medium mt-3 ">
+                Tetant Details
+              </Label>
               {formData.lookingFor == "Rent / Lease" && (
                 <div>
                   <Label className="text-md font-medium mt-3 ">
                     No. Already Rented{" "}
                   </Label>
+                  <p className="text-xs text-gray-500">
+                    (Add 0 if None rented)
+                  </p>
                   <div className="flex items-center gap-2">
                     <Input
                       placeholder="No. Tetants"
@@ -1151,6 +1181,142 @@ export default function PropertyForm() {
                       className="mt-2 w-40"
                     />
                   </div>
+                     <ErrorMessage error={errors.alreadyrent} />
+                  <div>
+                    <Label className="text-md font-medium mt-3 ">
+                      What you Want the Noise Level Of Tetant?{" "}
+                    </Label>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {[" Not comfortable", "Sometimes okay", "Mostly okay"].map(
+                      (option) => (
+                        <Button
+                          key={option}
+                          variant={
+                            formData.isNoise === option
+                              ? "selectdashed"
+                              : "select"
+                          }
+                          size={"sm"}
+                          onClick={() => handleChange("isNoise", option)}
+                        >
+                          {option}
+                        </Button>
+                      )
+                    )}
+                  </div>
+                      <ErrorMessage error={errors.isNoise} />
+                  <div>
+                    <Label className="text-md font-medium mt-3 ">
+                      What would the Tetant Food Preference?{" "}
+                    </Label>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {["Vegetarian", "Non-Vegetarian", "Eggetarian"].map(
+                      (option) => (
+                        <Button
+                          key={option}
+                          variant={
+                            formData.Foodpreference === option
+                              ? "selectdashed"
+                              : "select"
+                          }
+                          size={"sm"}
+                          onClick={() => handleChange("Foodpreference", option)}
+                        >
+                          {option}
+                        </Button>
+                      )
+                    )}
+                  </div>
+                  <ErrorMessage error={errors.Foodpreference} />
+                  <div>
+                    <Label className="text-md font-medium mt-3 ">
+                      is Smoking and Drinking allowed ?{" "}
+                    </Label>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {[
+                      "Smoking Allowed",
+                      "Drinking allowed",
+                      "Both",
+                      "None",
+                    ].map((option) => (
+                      <Button
+                        key={option}
+                        variant={
+                          formData.DrinksAndSmokeAllowed === option
+                            ? "selectdashed"
+                            : "select"
+                        }
+                        size={"sm"}
+                        onClick={() =>
+                          handleChange("DrinksAndSmokeAllowed", option)
+                        }
+                      >
+                        {option}
+                      </Button>
+                    ))}
+                  
+                  </div>
+                      <ErrorMessage error={errors.DrinksAndSmokeAllowed} />
+                  <div>
+                    <Label className="text-md font-medium mt-3 ">
+                      What type of roommates do you prefer ?{" "}
+                    </Label>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {[
+                      "Quiet & focused",
+                      "Balanced mix",
+                      "Friendly & social",
+                    ].map((option) => (
+                      <Button
+                        key={option}
+                        variant={
+                          formData.RoomatePerfer === option
+                            ? "selectdashed"
+                            : "select"
+                        }
+                        size={"sm"}
+                        onClick={() => handleChange("RoomatePerfer", option)}
+                      >
+                        {option}
+                      </Button>
+                    ))}
+                  </div>
+                      <ErrorMessage error={errors.RoomatePerfer} />
+                  <div>
+                    <Label className="text-md font-medium mt-3 ">
+                      What would Tetant Religion?{" "}
+                    </Label>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {[
+                      "Hindu",
+                      " Muslim",
+                      "Sikh",
+                      "Christian",
+                      "Jain / Buddhist",
+                      "Other belief / mixed background",
+                      "EveryOne",
+                      " Prefer not to say",
+                    ].map((option) => (
+                      <Button
+                        key={option}
+                        variant={
+                          formData.Religion === option
+                            ? "selectdashed"
+                            : "select"
+                        }
+                        size={"sm"}
+                        onClick={() => handleChange("Religion", option)}
+                      >
+                        {option}
+                      </Button>
+                    ))}
+                  </div>
+                     <ErrorMessage error={errors.Religion} />
                 </div>
               )}
 
@@ -1187,6 +1353,8 @@ export default function PropertyForm() {
                     </div>
                   </div>
                 )}
+
+              <hr />
               <div>
                 <div>
                   <Label className="text-md font-medium">
@@ -1232,7 +1400,6 @@ export default function PropertyForm() {
                         {option}
                       </Button>
                     ))}
-
                     {/* Display custom amenities */}
                     {formData.Options.filter(
                       (opt) =>
@@ -1608,13 +1775,18 @@ export default function PropertyForm() {
 
         <CardFooter className="flex justify-between">
           {step > 1 && (
-            <Button variant="outline" className=" absolute -top-12 left-0" onClick={handlePrev}>
-            <ArrowLeft/>Back
+            <Button
+              variant="outline"
+              className=" absolute -top-12 left-0"
+              onClick={handlePrev}
+            >
+              <ArrowLeft />
+              Back
             </Button>
           )}
           {step < 3 && (
             <Button onClick={handleNext} className="ml-auto">
-              Next <ArrowRight/>
+              Next <ArrowRight />
             </Button>
           )}
           {step === 3 && (

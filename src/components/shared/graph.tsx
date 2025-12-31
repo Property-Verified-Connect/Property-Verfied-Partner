@@ -19,13 +19,13 @@ export default function MobileHighgraph() {
   const containerRef = useRef(null);
   const [chartHeight, setChartHeight] = useState(320);
   const [GraphData, setGraphData] = useState({});
-    const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   const BASEURL = process.env.NEXT_PUBLIC_API_URL;
 
   // Dropdown filter states
   const [month, setMonth] = useState("All Months");
-  const [year, setYear] = useState("2025");
+  const [year, setYear] = useState("2026");
 
   const months = [
     "All Months",
@@ -49,60 +49,59 @@ export default function MobileHighgraph() {
     return () => window.removeEventListener("resize", setResponsiveHeight);
   }, []);
 
-function calculatePropertyStatistics(properties: Property[]): YearData {
-  const categories = ["approved", "Contact", "Purchase"];
-  const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-  ];
+  function calculatePropertyStatistics(properties: Property[]): YearData {
+    const categories = ["approved", "Contact", "Purchase"];
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
 
-  const stats: YearData = {};
+    const stats: YearData = {};
 
-  properties.forEach((property) => {
-    const createdDate = new Date(property.created_at);
-    if (isNaN(createdDate.getTime())) return;
+    properties.forEach((property) => {
+      const createdDate = new Date(property.created_at);
+      if (isNaN(createdDate.getTime())) return;
 
-    const year = createdDate.getFullYear().toString();
-    const month = monthNames[createdDate.getMonth()];
+      const year = createdDate.getFullYear().toString();
+      const month = monthNames[createdDate.getMonth()];
 
-    // Ensure year exists
-    if (!stats[year]) {
-      stats[year] = {};
-    }
+      // Ensure year exists
+      if (!stats[year]) {
+        stats[year] = {};
+      }
 
-    // Ensure month exists with default values
-    if (!stats[year][month]) {
-      stats[year][month] = [0, 0, 0];
-    }
+      // Ensure month exists with default values
+      if (!stats[year][month]) {
+        stats[year][month] = [0, 0, 0];
+      }
 
-    // Ensure "All Months" exists
-    if (!stats[year]["All Months"]) {
-      stats[year]["All Months"] = [0, 0, 0];
-    }
+      // Ensure "All Months" exists
+      if (!stats[year]["All Months"]) {
+        stats[year]["All Months"] = [0, 0, 0];
+      }
 
-    // STATUS mapping
-    let index = -1;
-    const status = property.status?.toLowerCase() || "";
+      // STATUS mapping
+      let index = -1;
+      const status = property.status?.toLowerCase() || "";
 
-    if (status.includes("approved")) index = 0;
-    else if (status.includes("contact")) index = 1;
-    else if (status.includes("purchase")) index = 2;
+      if (status.includes("approved")) index = 0;
+      else if (status.includes("contact")) index = 1;
+      else if (status.includes("purchase")) index = 2;
 
-    if (index !== -1) {
-      stats[year][month][index]++;
-      stats[year]["All Months"][index]++;
-    }
-  });
+      if (index !== -1) {
+        stats[year][month][index]++;
+        stats[year]["All Months"][index]++;
+      }
+    });
 
-  return stats;
-}
-
+    return stats;
+  }
 
   useEffect(() => {
     const fetchProperties = async () => {
-         setLoading(true);
+      setLoading(true);
       try {
-         const response =  await axios.get("/api/partner/booking-list");
+        const response = await axios.get("/api/partner/booking-list");
 
         const stats = calculatePropertyStatistics(response.data.booking);
         setGraphData(stats);
@@ -110,15 +109,17 @@ function calculatePropertyStatistics(properties: Property[]): YearData {
         const availableYears = Object.keys(stats);
 
         if (availableYears.length > 0) {
-          setYear(availableYears[0]);
+          // Sort years in descending order and pick the latest (first after sorting)
+          const latestYear = availableYears.sort((a, b) => parseInt(b) - parseInt(a))[0];
+          setYear(latestYear);
           setMonth("All Months");
         }
 
         console.log(response.data.booking);
       } catch (err) {
         console.error("Failed to fetch properties", err);
-      }finally{
- setLoading(false);
+      } finally {
+        setLoading(false);
       }
     };
     fetchProperties();
@@ -232,26 +233,22 @@ function calculatePropertyStatistics(properties: Property[]): YearData {
       </div>
 
       {/* Chart Section */}
-       { loading ? 
-  <div className="bg-white/90  flex items-center justify-center h-96 dark:bg-slate-900/80 p-2 w-full rounded-2xl shadow-sm">
-                 <svg className='svg' viewBox="25 25 50 50">
-  <circle className='circle' r="20" cy="50" cx="50"></circle>
-</svg>
-         </div>
-          :
-        
-        Object.keys(GraphData).length !== 0  ?
-      <div className="bg-white/90 dark:bg-slate-900/80 p-2 w-full rounded-2xl shadow-sm">
-         <HighchartsReact highcharts={Highcharts} options={options} />
-         
-      </div>
-         :
-  <div className="bg-white/90  flex items-center justify-center h-96 dark:bg-slate-900/80 p-2 w-full rounded-2xl shadow-sm">
-              <h1 className={`text-xl font-bold text-gray-400 ${inter.className}`}>No Booking Availabe </h1>
-         </div>
-        
-       }
-       
+      {loading ? 
+        <div className="bg-white/90  flex items-center justify-center h-96 dark:bg-slate-900/80 p-2 w-full rounded-2xl shadow-sm">
+          <svg className='svg' viewBox="25 25 50 50">
+            <circle className='circle' r="20" cy="50" cx="50"></circle>
+          </svg>
+        </div>
+        :
+        Object.keys(GraphData).length !== 0 ?
+          <div className="bg-white/90 dark:bg-slate-900/80 p-2 w-full rounded-2xl shadow-sm">
+            <HighchartsReact highcharts={Highcharts} options={options} />
+          </div>
+        :
+          <div className="bg-white/90  flex items-center justify-center h-96 dark:bg-slate-900/80 p-2 w-full rounded-2xl shadow-sm">
+            <h1 className={`text-xl font-bold text-gray-400 ${inter.className}`}>No Booking Availabe </h1>
+          </div>
+      }
     </div>
   );
 }

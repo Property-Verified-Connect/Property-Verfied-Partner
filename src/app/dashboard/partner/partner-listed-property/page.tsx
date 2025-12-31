@@ -47,9 +47,9 @@ function Page() {
     const unauthorize =useUnauthorize()
   
   const tabs = [
-    { id: 'approved', label: 'Approved Property', status: 'adminApproved' },
     { id: 'pending', label: 'Pending  Propetry', status: 'pending' },
-    { id: 'cancel', label: 'Cancel Propetry', status: 'cancel' },
+    { id: 'approved', label: 'Approved Property', status: 'adminApproved' },
+    { id: 'cancel', label: 'Cancelled Propetry', status: 'cancel' },
     
   ];
 
