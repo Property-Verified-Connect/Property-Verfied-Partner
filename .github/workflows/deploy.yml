@@ -21,7 +21,8 @@ jobs:
         run: |
           ssh ${{ secrets.LIGHTSAIL_USER }}@${{ secrets.LIGHTSAIL_HOST }} << 'EOF'
             export NVM_DIR="$HOME/.nvm"
-            source /etc/profile
+            source "$NVM_DIR/nvm.sh"
+            nvm use default
             cd /var/www/property-verified-partner
             git pull origin master
             npm install
