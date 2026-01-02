@@ -20,9 +20,11 @@ jobs:
       - name: Deploy to Server
         run: |
           ssh ${{ secrets.LIGHTSAIL_USER }}@${{ secrets.LIGHTSAIL_HOST }} << 'EOF'
+            export NVM_DIR="$HOME/.nvm"
+            source /etc/profile
             cd /var/www/property-verified-partner
             git pull origin master
             npm install
             npm run build
-            pm2 restart all
+            pm2 restart property-verified-partner-frontend
           EOF
